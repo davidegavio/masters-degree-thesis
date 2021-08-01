@@ -1,51 +1,31 @@
 \documentclass{oist} 
+\usepackage{biblatex, todonotes, wrapfig}
+\usepackage[ruled,vlined]{algorithm2e}
+
 \addbibresource{bibtex.bib}
-% \addbibresource{chapters/bibtex.bib}
 
 \begin{document}
 \subfile{\main/chapters/title}
 \subfile{\main/chapters/abstract}
 \subfile{\main/chapters/abbreviations}
+\subfile{\main/chapters/list_of_figures}
 
 \tableofcontents
 \addcontentsline{toc}{chapter}{Table of Contents}
+\listoftodos
 
-\chapter{Introduction}
-\section{Problem overview}
-\section{State of the art}
 
-\chapter{Technologies}
-\section{Python}
-\section{Spark}
-\section{Datalake}
-\section{Databricks}
-\section{Transformers}
+\subfile{\main/chapters/Introduction}
+\subfile{\main/chapters/Technologies}
+\subfile{\main/chapters/Architecture}
+\subfile{\main/chapters/Methods}
+\subfile{\main/chapters/Experiments}
+\subfile{\main/chapters/Conclusions}
 
-\chapter{System architecture}
-\section{Ancora da definire l'architettura da produzione}
-
-\chapter{Methods}
-\section{Preprocessing}
-\section{Embedding extraction}
-\section{Numerosity reduction}
-\section{Similarity}
-\section{Evaluation}
-
-\chapter{Experimental setup}
-\section{Dataset}
-\section{Libraries}
-\section{Cluster settings}
-
-\chapter{Results}
-\section{Esperimenti selezionati con risultati}
-
-\chapter{Conclusions}
-\section{Project conclusions}
-\section{Future work}
 
 \appendix
-
 \subfile{\main/chapters/appendix.tex}
+
 \printbibliography
 \addcontentsline{toc}{part}{Bibliography}
 

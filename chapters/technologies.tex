@@ -2,8 +2,75 @@
 \documentclass[\main/main.tex]{subfiles}
 \begin{document}
 \chapter{Technologies}
-\section{Distributed computing}
+\section{Cluster computing}
+Modern applications require to deal with immense amount of data as quick as possible. In many of these applications, data is extremely regular, so there is opportunity to exploit parallelism. Examples of possible applications are:
+\begin{itemize}
+    \item Web page ranking
+    \item Social networks analysis
+    \item Parallelizable computations
+\end{itemize}
+This parallelization is not achieved using a super computer that can handle the computation, but is achieved using "computing clusters". Computing clusters are large collections of commodity hardware, including conventional processors, connected by Ethernet network. The software stack begins with a new form of file system, called a “distributed file system,” which features much larger units than the disk blocks in a conventional operating system. Distributed file systems also provide replication of data or redundancy to protect against the frequent media failures that occur when data is distributed over thousands of low-cost compute nodes. \cite{leskovec_rajaraman_ullman_2020}
+
+\subsection{Big data}
+\subsection{Distributed file system}
+To exploit cluster computing, data must be organized differently from the conventional file systems of single computers. This new organization is called Distributed file system (DFS) and is used as follows:
+\begin{itemize}
+    \item Files can be huge, possibly terabyte in size
+    \item Files are rarely updated. They are read as input for calculation and possibly additional data is appended to files
+\end{itemize}
+Files are divided into chunks. Chunks are replicated on different computer nodes. If chunks are replicated on different racks so that a rack fail won't cause any data loss.
+Examples of DFS are:
+\begin{itemize}
+    \item Google File System (GFS), the original of the class
+    \item Hadoop Distributed File System (HDFS), an open-source DFS used with Hadoop
+    \item Colossus, an improved version of GFS
+\end{itemize}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.35]{images/cluster_computing/racks_dfs.png}
+    \caption{DFS rack architecture}
+    \label{fig:racks_dfs}
+\end{figure}
+\textbf{Rack failure}: If any problem causes the rack to not be able to intercommunicate with other racks.
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.35]{images/cluster_computing/hdfs_architecture.png}
+    \caption{HDFS  architecture}
+    \label{fig:hdfs_architecture}
+\end{figure}
 \subsection{MapReduce}
+MapReduce is a style of computing that is used to manage many large-scale, parallel computations in a way that is tolerant of hardware faults. A MapReduce computation consists of:
+\begin{itemize}
+    \item Map tasks: takes in input one or more data chunks and returns a sequence of \textit{key-value} pairs
+    \item Reduce tasks: combine all the values associated with a key, one key at a time
+\end{itemize}
+\begin{figure}[h]
+    \centering
+    \includegraphics[scale=0.35]{images/cluster_computing/map_reduce_schema.png}
+    \caption{MapReduce}
+    \label{fig:map_reduce}
+\end{figure}
+An example of computation is visible in Figure \ref{fig:map_reduce}
+\subsubsection{Map task}
+The input files for a Map task are elements of any type: tuple, document, \dots //
+A chunk is a collection of elements, and no element is stored across two chunks. 
+A Map task produces zero or more key-value pairs, with keys not necessarily uniques.
+\subsubsection{Grouping by key}
+Once the Map task is over, all key-value pairs are grouped by key, with a single list of values associated to that key
+\subsubsection{Reduce task}
+A Reduce task takes as input a pair of key, list of values associated to that key. The task produces a sequence of zero or more key-value pairs as output. The function that is applied on the list of values for a given key is called \textit{reducer}. For each Reduce task, there could be more reducers.
+\subsubsection{MapReduce execution}
+\begin{itemize}
+    \item The user program forks a Master controller process and some Worker processes at different compute nodes. A Worker handles Map tasks or Reduce tasks, but not both
+    \item According to the user program, the Master creates a given number of Map and Reduce tasks and assigns them to the Workers. 
+    \item The Master keeps track of the status of each Map and Reduce task (idle, executing, completed) and when a Worker finishes a task, the Master schedules a new task for that Worker
+\end{itemize}
+\subsubsection{Node failure}
+\begin{itemize}
+    \item If the Master fails, the entire MapReduce job must be restarted
+    \item If a Map worker fails, all its tasks (even completed), are rescheduled to other workers to complete them eventually
+    \item If a Reduce worker fails, its Reduce tasks will be put to idle status and rescheduled on another Reduce worker
+\end{itemize}
 \subsection{Spark}
 
 \section{Transformers}
@@ -23,14 +90,15 @@ The encoder is composed of a stack of $N=6$ identical layers, each one has two s
     \item a multi-head self-attention mechanism
     \item a position-wise fully connected feed-forward network
 \end{itemize}
-\todo[inline]{finish encoder}
+A residual connection followed by layer normalization is employed around each sub-layer. All sub-layers in the model produce an output of dimension $d_{model} = 512$.
+
 \subsection{Decoder}
-The decoder is composed of a stack of $N=6$ identical layers. The decoder inserts a third sub-layer to the two encoder sub-layer. This sub-layer performs multi-head attention over the output of the encoder stack.
-\todo[inline]{finish decoder}
+The decoder is composed of a stack of $N=6$ identical layers. The decoder inserts a third sub-layer to the two encoder sub-layer. This sub-layer performs multi-head attention over the output of the encoder stack. Similarly to the encoder, around each of the sub-layers are employed residual connections followed by layer normalization. The self-attention sub-layer is modified in the decoder stack to prevent positions from attending to subsequent positions. This kind of masking, combined with fact that the output embeddings are offset by one position, ensures that the predictions for position i can depend only on the known outputs at positions less than i. All sub-layers in the model produce an output of dimension $d_{model} = 512$.
+
 \subsection{Attention}
 An attention function consists in mapping a query and a set of key-value pairs to an output, where the query, keys, values and output are all vectors. The output is computed as a weighted sum of the values, with weights computed by a compatibility function of the query with the corresponding key.
 \subsubsection{Scaled dot-product attention} 
-\begin{figure}[h!]
+\begin{figure}[h]
     \centering
     \includegraphics[scale=0.35]{images/transformer/scaled_dot_product_attention.png}
     \caption{Scaled dot-product attention}
@@ -65,17 +133,14 @@ It consists of two linear transformations with a ReLU activation in between.
 \begin{center}
     $FFN(x) = max(0, xW_1 + b_1)W_2 + b_2$
 \end{center}
-The linear transformations remain the same across different positions, using different parameters on each layer. 
-\todo[inline]{finish this part while writing other models}
+The linear transformations remain the same across different positions, using different parameters on each layer. The dimensionality of input and output is $d_{model} = 512$, and the inner-layer has dimensionality $d_{ff} = 2048$.
 
-\subsection{Transformer technology in language field}
-Transformer technology and its bidirectional training have been used in the language modeling field. BERT \cite{devlin2018bert} is the first application of training bidirectionality in language representation field.
-\subsubsection{BERT}
-\subsubsection{MPNET}
-\subsubsection{XLM}
+\subsection{Embeddings and softmax}
+Learned embeddings are used to convert the input and output tokens to vectors of dimension $d_{model}$. The learned linear transformation and softmax function are used to convert the decoder output to predicted next-token probabilities.
 
+\subsection{Positional encodings}
+Since the model contains neither recurrence nor convolution, relative or absolute tokens positional encodings are injected in order to make use of the order of the sequence. Positional encodings are added to the input embeddings of the encoder and decoder stacks. They have the same dimension $d_{model}$ as the embeddings, so the two can be summed.
 
-
-
+\todo[inline]{think about inserting self-attention motivation} 
 
 \end{document}

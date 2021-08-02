@@ -72,6 +72,32 @@ A Reduce task takes as input a pair of key, list of values associated to that ke
     \item If a Reduce worker fails, its Reduce tasks will be put to idle status and rescheduled on another Reduce worker
 \end{itemize}
 \subsection{Spark}
+\textbf{Workflow systems}: Workflow systems extend MapReduce from the simple two-step workflow (the Map function feeds the Reduce function) to any collection of functions, with an acyclic graph representing workflow among the functions. That is, there is an acyclic flow graph whose arcs a → b represent the fact that function a’s output is an input to function b. \cite{leskovec_rajaraman_ullman_2020}
+Spark is and advanced workflow system, because of:
+\begin{itemize}
+    \item A more efficient failure handling
+    \item A more efficient way of grouping tasks among compute nodes and scheduling execution of functions
+    \item Integration of programming languages features and function libraries
+\end{itemize}
+Spark is based on Resilient Distributed Datasets (RDD). An RDD is distributed because it can be split into chunks and held at different compute nodes. They're resilient because it's expected that they can be recovered in case of partial or total loss. An RDD can contain elements of any kind, without restrictions.
+Operations in Spark are:
+\begin{itemize}
+    \item Transformations: operations applied to an RDD that produce another RDD
+    \item Actions: perform operations on an RDD and pass back the result to the application that called the Spark program
+\end{itemize}
+\subsubsection{Map, FlatMap and Filter}
+Differently from MapReduce approach, in Spark Map functions can be applied not only on key-value pairs, but can be applied to any kind of object, producing one object as result. 
+FlatMap is the same operation of Map in MapReduce, but without the requirement that all types be key-value pairs. Filter is a transformation that produces an RDD with only the objects that return true to a given predicate.
+\subsubsection{Reduce}
+Reduce operation is an action. Because of this, it returns a value and not another RDD. On an RDD, Reduces is applied on every pair of consecutive elements until only one lement remains, that becomes the result of the Reduce operation.
+\subsubsection{Spark implementation}
+Like Hadoop or other MapReduce implementations, Spark manage large RDDs in the same way: it divides it in splits (MapReduces's chunks) and spreads them to different compute nodes in order to allow parallel computation.
+\paragraph{Lazy evaluation}
+The first difference from other MapReduce implementations, is that Spark is lazy evaluated: transformations are not applied on an RDD until it is required to do so, tipically in correspondence of an action.
+\paragraph{Resilience of RDDs}
+Performing operations on RDDs, creates a \textit{lineage} of those RDDs, so that in case of failure, Spark is able to recreate the RDD (or just a split) looking at its lineage.
+
+
 
 \section{Transformers}
 Transformers \allowbreak\cite{vaswani2017attention} are an architecture based only on attention mechanism, dispensing with recurrence and convolutions. Transformers are used to draw global dependencies between input and output.

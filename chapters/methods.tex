@@ -2,11 +2,72 @@
 \documentclass[\main/main.tex]{subfiles}
 \begin{document}
 \chapter{Methods}
+\todo[inline]{write introduction for chapter}
+All services are Jupyter notebook. They exploit the parallelization ability of PySpark, working on several lines at the same time usign Map-Reduce approach.
 \section{Preprocessing}
+As said in \textit{Architecture} chapter, this is the phase where the dataset is elaborated in order to be used further on. 
 \subsection{Cleaning}
+Given a textual dataset, cleaning service performs all the operations needed to have cleaned and well formed documents.
+\subsubsection{HTML cleaning}
+The first (parametrized) step is to remove all HTML special characters. This operation is preparatory for next phases that need to deal with human-readable texts.
+\begin{center}
+    \begin{algorithm}[H]
+     \KwData{Textual dataset}
+     \KwResult{Cleaned texts}
+     initialization\;
+     \ForEach{dataset row}{
+      read document body\;
+      unescape HTML special tags\;
+      substitute resulting HTML tags with an empty string\;
+     }
+     \caption{HTML removal}
+    \end{algorithm}
+\end{center}
+This service is based on Python HTML class \cite{html_parser}, which allows to parse textual files filled with HTMl special characters and tags.
+\subsubsection{Sentence splitting}
+This is the first step to overcome transformer technology limitations: in order to not increase to much memory usage, transformers libraries set a maximum of tokens that the model is able to manage. Therefore, long texts are difficult to manage as a whole, so they need to be divided in sentences (splits).
+\begin{center}
+    \begin{algorithm}[H]
+     \KwData{Cleaned dataset}
+     \KwResult{Splitted texts}
+     initialization\;
+     \ForEach{dataset row}{
+      read document body\;
+      split text according to a regular expression\;
+     }
+     \caption{HTML removal}
+    \end{algorithm}
+\end{center}
+\subsubsection{Split cleaning}
+In order to obtain the best vectorial representation using transformers, splits need to be cleaned from all punctuation and special characters that are not truly useful. Those characters could be present in text due to human errors, OCR errors or even errors in format-to-format conversion.
+\begin{center}
+    \begin{algorithm}[H]
+     \KwData{Splitted dataset}
+     \KwResult{Cleaned splits}
+     initialization\;
+     \ForEach{dataset row}{
+      read document splits\;
+      \ForEach{split}{
+        remove all useless punctuation\;
+        remove all useless characters\;
+        split in words\;
+        \If{word is all uppercase}{
+            convert to lowercase\;
+            }
+        \Else{keep the word\;}
+        rebuild the sentence\;
+      }
+     }
+     \caption{HTML removal}
+    \end{algorithm}
+\end{center}
+\subsubsection{Split filtering}
+
+\subsection{Filtering}
+
 \section{Processing}
 \subsection{Embedding extraction}
 \subsection{Numerosity reduction}
-\subsection{Similarity}
+\subsection{Similarity scoring}
 \section{Evaluation}
 \end{document}

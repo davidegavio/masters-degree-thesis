@@ -12,6 +12,19 @@ Modern applications require to deal with immense amount of data as quick as poss
 This parallelization is not achieved using a super computer that can handle the computation, but is achieved using "computing clusters". Computing clusters are large collections of commodity hardware, including conventional processors, connected by Ethernet network. The software stack begins with a new form of file system, called a “distributed file system,” which features much larger units than the disk blocks in a conventional operating system. Distributed file systems also provide replication of data or redundancy to protect against the frequent media failures that occur when data is distributed over thousands of low-cost compute nodes. \cite{leskovec_rajaraman_ullman_2020}
 
 \subsection{Big data}
+Big data is high-volume, high-velocity and/or high-variety information assets that demand cost-effective, innovative forms of information processing that enable enhanced insight, decision making, and process automation.\cite{bigdatagartner}
+\begin{itemize}
+    \item \textbf{Volume}: the magnitude of data. Big data sizes could be terabytes or even petabytes
+    \item \textbf{Variety}: the structural heterogeneity in a dataset. Data could be structured, semi-structured or unstructured.
+    \item \textbf{Velocity}: data generation rate. Data analysis speed is a strongly connected concept: higher the velocity, higher the needed analysis speed.
+\end{itemize}
+Other mentioned dimensions:
+\begin{itemize}
+    \item \textbf{Veracity}: the unreliability of some data sources. For example, social media sentiments are a uncertain data source, because they imply human judgement
+    \item \textbf{Variability}: the variation in data flow rates
+    \item \textbf{Complexity}: the heterogeneity of data sources. Being generated through a myriad of sources, big data must be cleaned and connected in order to be used
+    \item \textbf{Value}: the importance of big data. Being characterized by a "low value density", a big quantity must be analyzed in order to obtain an high value
+\end{itemize}\cite{Gandomi2015BeyondTH}
 \subsection{Distributed file system}
 To exploit cluster computing, data must be organized differently from the conventional file systems of single computers. This new organization is called Distributed file system (DFS) and is used as follows:
 \begin{itemize}
@@ -167,6 +180,27 @@ Learned embeddings are used to convert the input and output tokens to vectors of
 \subsection{Positional encodings}
 Since the model contains neither recurrence nor convolution, relative or absolute tokens positional encodings are injected in order to make use of the order of the sequence. Positional encodings are added to the input embeddings of the encoder and decoder stacks. They have the same dimension $d_{model}$ as the embeddings, so the two can be summed.
 
-\todo[inline]{think about inserting self-attention motivation} 
+\subsection{Self-attention motivations}
+In order to understand why self-attention layers are used, it's necessary to compare them with recurrent and convolutional layers. There are three aspects that are important to consider: the total computation complexity per layer, the amount of computation that can be parallelized (intended as the minimum number of sequential operations required) and the path length between long-range dependencies in the network. \\
+In terms of computation that can be parallelized, a self-attention layer connects all positions with a constant number of sequentially executed operations, whereas a recurrent layer requires $O(n)$ sequential operations. In terms of computational complexity, self-attention layers are faster than recurrent layers when the sequence length n is smaller than the representation dimensionality d, which is most often the case with sentence representations used by state-of-the-art models in machine translations, such as word-piece and byte-pair representations.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{||c c c c||} 
+ \hline
+ Layer type & Complexity per layer & Sequential operations & Maximum path length \\ [0.5ex] 
+ \hline\hline
+ Self attention & $O(n^2 \cdot d)$ & $O(1)$ & $O(1)$ \\ 
+ \hline
+ Recurrent & $O(n \cdot d^2)$ & $O(n)$ & $O(n)$ \\
+ \hline
+ Convolutional & $O(k \cdot n \cdot d^2)$ & $O(1)$ & $O(log_k(n))$ \\
+ \hline
+ 
+\end{tabular}
+\caption{Self attention complexity}
+ \label{table:complexity_self_attention}
+\end{table}
+
 
 \end{document}

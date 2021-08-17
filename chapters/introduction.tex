@@ -3,5 +3,54 @@
 \begin{document}
 \chapter{Introduction}
 \section{Project overview}
+The project which this document is about, has been realized at artea.com \cite{artea}, which is a consulting tech company that delivers business-to-business AI solutions. \\
+The idea behind the project was to investigate the possibility of exploiting Transformer-generated embedding in order to use them in a semantic context. Following this idea led to a PoC that consists of a "Semantic Engine" able to semantically rank documents given a query at search time. This approach is strongly based on Transformer technology, which gives a semantic dimension to the research instead of a statistical dimension based on TF/idf or similar techniques.
+The final result consists in a piece of architecture based on services that can handle generic textual data from raw data cleaning to document ranking. This piece of architecture is domain agnostic, distributable and each developed service is an atomic transaction.
 \section{State of the art}
+\subsection{Text representation}
+In order to use textual data, is needed to represent it in a more usable format. Textual representation can be divided in not contextualized and contextualized: not contextualized representation tend to focus only on words or subwords, without looking neither to local nor global context. On the other hand, contextualized approaches, try to draw the big picture, representing texts in the corpus using a representation that keeps in account what the context is, what are the relationships among words. Contextualized approaches try to give a more semantic representation of texts.
+\subsubsection{Not contextualized}
+\paragraph{Bag of Words}
+A BoW is a way for extracting features from textual data. Using a vocabulary of words, measures the occurrences of words in a document. Every other information apart from term frequencies are discarded. In text similarity context, similar documents share similar content measured in vocabulary word frequencies.
+\paragraph{TF-IDF}
+An enhancement to BoW approach is TF-IDF: rescaling the frequency of words using the frequency in the whole corpus. In this way words very common tend to be penalized because they are frequent in all documents. TF-IDF consist of:
+\begin{itemize}
+    \item Term frequency: terms frequencies in current document
+    \item Inverse term frequency: scores how important a term is in the corpus
+\end{itemize}
+\paragraph{Word embeddings}
+Word embeddings are a learned multidimensional representation for text. Word embeddings techniques represent words as real-valued dense vectors in a given vector space. The idea is to give a similar representation for words that are used in a similar way, in opposition with approaches like BoW where words with similar usage have different representation (unless explicitly managed). Some examples:
+\begin{itemize}
+    \item \textbf{Word2Vec}: given a large corpus of documents, word2vec is able to give a word representation based on its usage and occurrences. word2vec has two different achitectures: skip-gram and CBOW (Continuouos BoW). CBOW is similar to a feed-forward neural network, it tries to predict the correct word given a list of context words. On the other hand, with te skip-gram approach, word2vec uses the target word to predict context words that come before and after it.\cite{mikolov2013efficient}
+    \item \textbf{GloVe}: this approach relies on the idea that ratios of co-occurrence probabilities between words may encode a word meaning inside a multidimensional vector. The training objective is to learn word vectors such that their dot product equals the logarithm of the words' probability co-occurrence. The objective function associates the rations of co-occurrence probabilities with vector differences in the word vector space. \cite{pennington2014glove}
+\end{itemize}
+\subsubsection{Contextualized}
+\paragraph{Transformers}
+Transformers are an architecture based only on attention mechanism, dispensing with recurrence and convolutions. Transformers are used to draw global dependencies between input and output. They are used to better handle long-range dependencies within a text. These technology allow to represent texts in a more semantical way, understanding context and relations among differnt parts of the text. \cite{vaswani2017attention}
+\subsection{Textual similarity}
+The current state-of-the-art of text similarity computation relies on three similarity functions:
+\begin{itemize}
+    \item \textbf{Cosine distance/similarity}: the angle between two vectors is used to measure their similarity. Let $x$ and $y$ be two vectors for comparison:
+    \begin{center}
+        $sim(x, y) = \frac{x \cdot y}{\lVert x \rVert \cdot \lVert y \rVert}$
+    \end{center}
+    where $\lVert x \rVert$ is the Euclidean norm of vector $x = (x_1, x_2,\dots, x_p)$ defined as \\$\sqrt{x^2_1 + x^2_2 + \dots + x^2_p}$. A cosine of value $0$ means that the vectors are completely different, while a cosine of value 1 means that they are the same vector. \cite{cosine_HAN201239}
+    \item \textbf{Euclidean distance}: it consists of the straight-line distance between two vectors. Given $x$ and $y$ vectors, the euclidean distance is computed as follows:
+    \begin{center}
+        $Euclidean Distance = \sqrt{\sum\limits_{i=1}^n (x_i+y_i)^2}$
+    \end{center}
+    The euclidean distance is less used than Cosine and Jaccard similarities.
+    \item \textbf{Jaccard similarity}: the Jaccard similarity of sets $S$ and $T$ is $\frac{| S \cap T|}{|S \cup T|}$, that is, the ratio of the size of the intersection of $S$ and $T$ to the size of their union.\cite{leskovec_rajaraman_ullman_2020}\\
+    The two sets could be sets of characters or words.
+\end{itemize}
+\section{Manuscript organization}
+This thesis document is organized in different chapters that cover all project aspects, from a theoretical point of view, to an experimental point of view.
+The chapters are divided in the following way:
+\begin{itemize}
+    \item \textbf{2 - Technologies}: this chapter covers the theoretical aspect of used technologies
+    \item \textbf{3 - Architecture}: this chapter describes the system architecture which has been implemented during the project period
+    \item \textbf{4 - Methods}: this chapter focuses on the analysis on the methods applied in order to obtain final results
+    \item \textbf{5 - Experiments}: this chapter contains a selection of experiments that have been completed during the project, in order to demonstrate the goodness of the work
+    \item \textbf{6 - Conclusions}: this chapter sums up all the work, focusing on what has been done and on what is still needed to complete exhaustively the project
+\end{itemize}
 \end{document}

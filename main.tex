@@ -1,8 +1,7 @@
 \documentclass{oist} 
 \usepackage{biblatex, todonotes, wrapfig}
 \usepackage[ruled,vlined]{algorithm2e}
-
-\addbibresource{bibtex.bib}
+\usepackage{listings, xcolor}
 
 \begin{document}
 \subfile{\main/chapters/title}
@@ -14,7 +13,6 @@
 \addcontentsline{toc}{chapter}{Table of Contents}
 \listoftodos
 
-
 \subfile{\main/chapters/Introduction}
 \subfile{\main/chapters/Technologies}
 \subfile{\main/chapters/Architecture}
@@ -22,11 +20,11 @@
 \subfile{\main/chapters/Experiments}
 \subfile{\main/chapters/Conclusions}
 
-
 \appendix
 \subfile{\main/chapters/appendix.tex}
 
 \printbibliography
 \addcontentsline{toc}{part}{Bibliography}
+\todo[inline]{split bibliography in code documentation and references}
 
 \end{document}

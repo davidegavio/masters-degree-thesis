@@ -2,8 +2,9 @@
 \documentclass[\main/main.tex]{subfiles}
 \begin{document}
 \chapter{Methods}
-\todo[inline]{write introduction for chapter}
-All services are Jupyter notebook. They exploit the parallelization ability of PySpark, working on several lines at the same time usign Map-Reduce approach.
+In this chapter there will be an explanation of what every single service does. Due to legal reasons in this manuscript there won't be any code or dataset example. Each service component will be explained through a pseudocode representation
+\todo[inline]{finish introduction for chapter}
+All services are Jupyter notebooks. They exploit the parallelization ability of PySpark, working on several lines at the same time using Map-Reduce approach.
 \section{Preprocessing}
 As said in \textit{Architecture} chapter, this is the phase where the dataset is elaborated in order to be used further on. 
 \subsection{Cleaning}
@@ -14,28 +15,28 @@ The first (parametrized) step is to remove all HTML special characters. This ope
     \begin{algorithm}[H]
      \KwData{Textual dataset}
      \KwResult{Cleaned texts}
-     initialization\;
+     initialization
      \ForEach{dataset row}{
-      read document body\;
-      unescape HTML special tags\;
-      substitute resulting HTML tags with an empty string\;
+      read document body
+      unescape HTML special tags
+      substitute resulting HTML tags with an empty string
      }
      \caption{HTML removal}
     \end{algorithm}
 \end{center}
-This service is based on Python HTML class \cite{html_parser}, which allows to parse textual files filled with HTMl special characters and tags.
+This service is based on Python HTML class \cite{html_parser}, which allows to parse textual files filled with HTML special characters and tags.
 \subsubsection{Sentence splitting}
 This is the first step to overcome transformer technology limitations: in order to not increase to much memory usage, transformers libraries set a maximum of tokens that the model is able to manage. Therefore, long texts are difficult to manage as a whole, so they need to be divided in sentences (splits).
 \begin{center}
     \begin{algorithm}[H]
      \KwData{Cleaned dataset}
      \KwResult{Splitted texts}
-     initialization\;
+     initialization
      \ForEach{dataset row}{
-      read document body\;
-      split text according to a regular expression\;
+      read document body
+      split text according to a regular expression
      }
-     \caption{HTML removal}
+     \caption{Text split}
     \end{algorithm}
 \end{center}
 \subsubsection{Split cleaning}
@@ -44,30 +45,95 @@ In order to obtain the best vectorial representation using transformers, splits 
     \begin{algorithm}[H]
      \KwData{Splitted dataset}
      \KwResult{Cleaned splits}
-     initialization\;
+     initialization
      \ForEach{dataset row}{
-      read document splits\;
+      read document splits
       \ForEach{split}{
-        remove all useless punctuation\;
-        remove all useless characters\;
-        split in words\;
+        remove all useless punctuation
+        remove all useless characters
+        split in words
         \If{word is all uppercase}{
-            convert to lowercase\;
+            convert to lowercase
             }
-        \Else{keep the word\;}
-        rebuild the sentence\;
+        \Else{keep the word}
+        rebuild the sentence
       }
      }
-     \caption{HTML removal}
+     \caption{Split cleaning}
     \end{algorithm}
 \end{center}
 \subsubsection{Split filtering}
+The final step of cleaning service is split filtering. In this phase, splits that do not satisfy certain conditions are filtered out in order to keep only correct splits.
+\begin{center}
+    \begin{algorithm}[H]
+     \KwData{Cleaned dataset}
+     \KwResult{Filtered texts}
+     initialization
+     \ForEach{dataset row}{
+      read document splits
+      \ForEach{split}{
+        \If{split is longer than threshold AND split length/number of word ratio is bigger than threshold}{
+            keep split
+            }
+        \Else{filter out split}
+      }
+     }
+     \caption{Split filter}
+    \end{algorithm}
+\end{center}
 
 \subsection{Filtering}
+In some applications, it is needed to reduce the number of records inside a dataset. In the implemented framework this is performed using the filtering service. Reading a list of keys which has to be kept, this service is able to filter out those keys that aren't part of the list mentioned earlier.
+\begin{center}
+    \begin{algorithm}[H]
+     \KwData{Cleaned dataset}
+     \KwData{Filter dataset}
+     \KwResult{Filtered dataset}
+     initialization
+     join cleaned and filter dataset
+     \Return filtered dataset with rows that are part of both datasets
+     \caption{Dataset filter}
+    \end{algorithm}
+\end{center}
 
 \section{Processing}
+This category includes services that generate the information needed to perform all similarity tasks of the framework. Ideally, these services work on a cleaned dataset, so they are the next step of preprocessing services. 
 \subsection{Embedding extraction}
+This service is the core of the framework: decision made in this service constitute the biggest discriminant of the framework. Using a given model, it converts sentences into vectorial representations (embedding). This is possible using a library called SentenceTransformers \cite{sbert}, based on their original work \textit{Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks} \cite{reimers2019sentencebert}. SentenceTransformers allows to choose a transformer model from either the library itself or from another repository of transformer models: \textit{Huggingface} \cite{huggingface}. SentenceTransformers abstracts all the tokenization and averaging logics: given a sentence, it is tokenized, for each token it is extracted a n-dimensional vector (e.g. 768) and finally those vectors are averaged in order to obtain a single n-dimensional vector. To overcome the problem of transformer model longest manageable sequence, the service performs a tokenization, using the model tokenizer, in order to check if the input sentence is manageable by the chosen model. If it's longer, the sentence is splitted in order to perform the extraction without any problem. The pseudocode is visible below:
+\begin{center}
+    \begin{algorithm}[H]
+     \KwData{Cleaned dataset}
+     \KwResult{Filtered dataset}
+     initialization
+     join cleaned and filter dataset
+     \Return filtered dataset with rows that are part of both datasets
+     \caption{Embedding extraction}
+    \end{algorithm}
+\end{center}
+\todo[inline]{write pseudocode for embedding extraction}
+
 \subsection{Numerosity reduction}
+\todo[inline]{insert explanation for numerosity reduction}
+
 \subsection{Similarity scoring}
+In order to complete a similarity search task, a way of scoring this similarity is needed. The generated embeddings as terms of a given similarity function. 
+\subsubsection{Long documents problem}
+Working with long documents is not trivial, due to intrinsic limitations of transformer models. As said, each model has an input sequence maximum length that cannot be exceeded because it will lead to errors in vectorized representation (sequence truncation, exception raising, ...). A possible solutions to this problem could be averaging all the vectors of different sentences that constitute the original text. The higher the number of sentences, the higher the information dilution: the final vector will be a vector that doesn't truly represent anything inside the original text, leading to high similarity scores even if the original documents are very different. In the next subsection will be presented the chosen similarity scoring approach.
+\subsubsection{Similarity scoring algorithm}
+As previously mentioned, working with long documents is not that easy. Starting from the cleaning phase where text bodies are divided in sentences, it has been decided to use a \textit{voting} approach. The voting approach allows to compare documents using the sentences that compose them, allowing in this way to let each sentence "choose" its most similar sentence of the other document. The similarity is calculated using cosine similarity, which has been observed to work well in semantic similarity fields. The choice of the most similar sentence is performed keeping the highest scoring sentence in the research document and its score. To give a final result, the algorithm summarizes a final score computing one last operation (mean, median, ...) on the list of highest scoring sentences scores chosen by query sentences. The pseudocode is visible below:
+\begin{center}
+    \begin{algorithm}[H]
+     \KwData{Cleaned dataset}
+     \KwResult{Filtered dataset}
+     initialization
+     join cleaned and filter dataset
+     \Return filtered dataset with rows that are part of both datasets
+     \caption{Embedding extraction}
+    \end{algorithm}
+\end{center}
+\todo[inline]{write pseudocode for scoring algorithm}
+
+
 \section{Evaluation}
+\todo[inline]{write evaluation explanation]}
 \end{document}

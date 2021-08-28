@@ -4,14 +4,14 @@
 \chapter{Introduction}
 \section{Project overview}
 The project which this document is about, has been realized at artea.com \cite{artea}, which is a consulting tech company that delivers business-to-business AI solutions. \\
-The idea behind the project was to investigate the possibility of exploiting Transformer-generated embedding in order to use them in a semantic context. Following this idea led to a PoC that consists of a "Semantic Engine" able to semantically rank documents given a query at search time. This approach is strongly based on Transformer technology, which gives a semantic dimension to the research instead of a statistical dimension based on TF/idf or similar techniques.
+The idea behind the project was to investigate the possibility of exploiting Transformer-generated embeddings in order to use them in a semantic context. Following this idea led to a PoC that consists of a "Semantic Engine" able to semantically rank documents given a query at search time. This approach is strongly based on Transformer technology, which gives a semantic dimension to the research instead of a statistical dimension based on TF/idf or similar techniques.
 The final result consists in a piece of architecture based on services that can handle generic textual data from raw data cleaning to document ranking. This piece of architecture is domain agnostic, distributable and each developed service is an atomic transaction.
 \section{State of the art}
 \subsection{Text representation}
 In order to use textual data, is needed to represent it in a more usable format. Textual representation can be divided in not contextualized and contextualized: not contextualized representation tend to focus only on words or subwords, without looking neither to local nor global context. On the other hand, contextualized approaches, try to draw the big picture, representing texts in the corpus using a representation that keeps in account what the context is, what are the relationships among words. Contextualized approaches try to give a more semantic representation of texts.
 \subsubsection{Not contextualized}
 \paragraph{Bag of Words}
-A BoW is a way for extracting features from textual data. Using a vocabulary of words, measures the occurrences of words in a document. Every other information apart from term frequencies are discarded. In text similarity context, similar documents share similar content measured in vocabulary word frequencies.
+A BoW is a way for extracting features from textual data. Using a vocabulary of words, it measures the occurrences of words in a document. Every other information apart from term frequencies are discarded. In text similarity context, similar documents share similar content measured in vocabulary word frequencies.
 \paragraph{TF-IDF}
 An enhancement to BoW approach is TF-IDF: rescaling the frequency of words using the frequency in the whole corpus. In this way words very common tend to be penalized because they are frequent in all documents. TF-IDF consist of:
 \begin{itemize}

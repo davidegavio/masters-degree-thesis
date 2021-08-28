@@ -1,10 +1,175 @@
 \providecommand{\main}{..}
 \documentclass[\main/main.tex]{subfiles}
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+}
 \begin{document}
-\chapter{Experiments}
+\chapter{Experiments and results}
 \section{Experimental setup}
 \subsection{Dataset}
-\subsection{Libraries}
+Due to computation time constraints, it has not been possible to perform experiments on the whole dataset. Thus, the dataset has been reduced in order to make possible the execution of different experiments in a reasonable time. As mentioned before in \textit{Methods} chapter, a resulting dataset of 100 records has been created. Each record is a key-value pair object composed in the following way:
+\begin{center}
+    \begin{lstlisting}[language=json, caption="Experimental dataset object", captionpos=b]
+        {
+         "query_document_key": "query_key",
+         "query_field_0": "value",
+         ...: ...,
+         "query_field_n": "value",
+         "search_document_key": "search_key"
+         "search_field_0": "value",
+         ...: ...,
+         "search_field_n": "value",
+         "relation": "true"
+        }
+    \end{lstlisting}
+\end{center}
+All the informative content is maintained. At this point, the memory footprint of the dataset is at his peak, because it contains all the previous fields both of the original objects, query and search documents.\\
+As previously mentioned, the dataset is composed by one hundred query-search documents coupled: these couples have been decided in a qualitative way, choosing the right documents for each query. For each query there are five documents that are strongly correlated to it and five documents that are not correlated at all. This organization is useful both form the point of view of evaluation (as previously mentioned in \textit{Methods} chapter), but it is also useful from a computational point of view, given that the dataset is rather small.
+An idea of the resulting dataset is visible below, for sake of brevity some information have been omitted:
+\begin{center}
+    \begin{tabular}{||c | c c||} 
+     \hline
+     Query key & Document key & Relation\\ [0.5ex] 
+     \hline\hline
+     query\_key\_0 & document\_key & true \\ 
+     \hline
+     \dots & \dots & \dots\\
+     \hline
+     query\_key\_0 & document\_key & false\\
+     \hline
+     \dots & \dots & \dots\\
+     \hline
+     query\_key\_9 & document\_key & true \\ 
+     \hline
+     \dots & \dots & \dots\\
+     \hline
+     query\_key\_9 & document\_key & false\\
+     \hline
+    \end{tabular}
+\end{center}
+As visible, for each query identified by \textit{query\_key\_n}, there are multiple documents associated with their correlation attribute.
+\subsection{Transformer models}
+As said in \textit{Methods} chapter, the model choice is the biggest discriminant for the final result. In \textit{Technologies} chapter has been presented the original transformer architecture based on Vaswani's paper \cite{vaswani2017attention}. Such technology has been further enhanced in order to obtain way more usable and representative embeddings. In this work have been used different \textit{transformer families}:
+\begin{itemize}
+    \item \textbf{BERT}
+    \item \textbf{ALBERT}
+    \item \textbf{DistilBERT}
+    \item \textbf{MPNET}
+    \item \textbf{XLM}
+\end{itemize}
+\paragraph{BERT}
+BERT has been the first transformer model released after Vaswani's. It has been released and open sourced by Google, reaching the state-of-the-art for NLP. Looking at their blog post \cite{bert_blog_post}, BERT can represent a word using its surrounding context, contextualizing the representation. BERT has been the first deeply bidirectional, unsupervised language representation, pretrained using only a plain text corpus. \cite{DBLP:journals/corr/abs-1810-04805}
+\paragraph{ALBERT}
+Like BERT, ALBERT has been released by Google. Looking at their blog post \cite{albert_blog_post}, ALBERT implements two main design changes respecting to BERT, in order to optimize the performances. The first change is to factorize the embedding parametrization, splitting the embedding matrix between input-level embeddings with a relatively-low dimension, while the hidden-layer embeddings use higher dimensionalities. The second aspect on which ALBERT focuses is layer stacking: differently from BERT, in ALBERT there is a parameter sharing across the layers, resulting in a slightly diminished accuracy while reducing the size of the model. \cite{DBLP:journals/corr/abs-1909-11942}
+\paragraph{MPNET}
+MPNET has been released by Microsoft in 2020. As visible from their blog post \cite{mpnet_blog_post},  researchers that developed MPNET, realized that two of the main pretraining tasks of transformers, masked language modeling adopted in BERT and permuted language modeling adopted in XLNet, have different limitations. They came up with and approach that inherits the advantages of MLM and PLM and avoids their limitations. Masked language modeling (MLM) is proposed in BERT, which randomly masks some tokens with a masked symbol [M] and predicts the masked tokens given remaining tokens. Permuted language modeling (PLM) is proposed in XLNet, which randomly permutes a sequence and predicts the tokens in the right part (predicted part) in an autoregressive way. PLM can model the dependency among the predicted tokens with autoregressive prediction, but it cannot see the position information of the full sentence, which will cause mismatches between the pretraining and fine-tuning since the position information of the full sentence can be seen in the downstream tasks. MPNet, uses masked and permuted language modeling to model the dependency among predicted tokens and see the position information of the full sentence. 
+\cite{DBLP:journals/corr/abs-2004-09297}
+\paragraph{DistilBERT}
+DistilBERT has been released by HuggingFace engineers in 2019. They focused on the problem of growing model size and how to put in production such models. From their blog post \cite{distilbert_blog_post}, they used the \textit{distillation} technique to compress a large model into a smaller model.\\
+\textbf{Distillation}: Knowledge distillation (sometimes also referred to as teacher-student learning) is a compression technique in which a small model is trained to reproduce the behavior of a larger model (or an ensemble of models). It was introduced by Bucila et al.\cite{10.1145/1150402.1150464} and generalized by Hinton et al.\cite{hinton2015distilling} a few years later. 
+\cite{DBLP:journals/corr/abs-1910-01108}
+\paragraph{XLM}
+XLM transformer has been released by Facebook, in 2019. As visible by their blog post \cite{xlm_blog_post}, researchers at Facebook developed this transformer model to extend the pretraining for English language to other languages. XLM uses a known pre-processing technique (BPE) and a dual-language training mechanism with BERT in order to learn relations between words in different languages. First, instead of using word or characters as the input of the model, it uses Byte-Pair Encoding (BPE) that splits the input into the most common sub-words across all languages, thereby increasing the shared vocabulary between languages. Furthermore, it extends BERT architecture in two ways:
+\begin{itemize}
+    \item Each training sample consists of the same text in two languages, whereas in BERT each sample is built from a single language. As in BERT, the goal of the model is to predict the masked tokens, however, with the new architecture, the model can use the context from one language to predict tokens in the other, as different words are masked words in each language (they are chosen randomly).
+    \item The model also receives the language ID and the order of the tokens in each language, i.e. the Positional Encoding, separately. The new metadata helps the model learn the relationship between related tokens in different languages.
+\end{itemize}
+\cite{DBLP:journals/corr/abs-1901-07291}
+
+\subsection{Libraries and modules}
+\todo[inline]{insert citation for libraries}
+\subsubsection{NumPy}
+NumPy is the fundamental package for scientific computing in Python. It is a Python library that provides a multidimensional array object, various derived objects (such as masked arrays and matrices), and an assortment of routines for fast operations on arrays, including mathematical, logical, shape manipulation, sorting, selecting, I/O, discrete Fourier transforms, basic linear algebra, basic statistical operations, random simulation and much more.\cite{harris2020array}
+\paragraph{The \textit{ndarray}} Is the core of the NumPy package, which encapsulates n-dimensional arrays of homogeneous data types. There are several important differences between NumPy arrays and the standard Python sequences:
+\begin{itemize}
+    \item \textbf{Array size}: have a fixed size at creation, unlike Python lists (which can grow dynamically). Changing the size of an ndarray will create a new array and delete the original
+    \item \textbf{Element type}: elements in a NumPy array are all required to be of the same data type, and thus will be the same size in memory
+    \item \textbf{Mathematical operations}: NumPy arrays facilitate advanced mathematical and other types of operations on large numbers of data. Typically, such operations are executed more efficiently and with less code than is possible using Python’s built-in sequences
+    \item \textbf{Advanced libraries}: the growing plethora of scientific and mathematical Python-based packages are using NumPy arrays; though these typically support Python-sequence input, they convert such input to NumPy arrays prior to processing, and they often output NumPy arrays. In other words, in order to efficiently use much (perhaps even most) of today’s scientific/mathematical Python-based software, just knowing how to use Python’s built-in sequence types is insufficient - one also needs to know how to use NumPy arrays
+\end{itemize}
+\subsubsection{SciPy}
+SciPy is a collection of mathematical algorithms and convenience functions built on the NumPy extension of Python. It adds significant power to the interactive Python session by providing the user with high-level commands and classes for manipulating and visualizing data. With SciPy, an interactive Python session becomes a data-processing and system-prototyping environment rivaling systems, such as MATLAB, IDL, Octave, R-Lab, and SciLab.
+The additional benefit of basing SciPy on Python is that this also makes a powerful programming language available for use in developing sophisticated programs and specialized applications. Scientific applications using SciPy benefit from the development of additional modules in numerous niches of the software landscape by developers across the world. Everything from parallel programming to web and data-base subroutines and classes have been made available to the Python programmer. All of this power is available in addition to the mathematical libraries in SciPy. \cite{2020SciPyNMeth}
+\subsubsection{Transformers}
+Huggingface Transformers provides thousands of pretrained models to perform tasks on texts such as classification, information extraction, question answering, summarization, translation, text generation and more in over 100 languages. In the project has been used the tokenizer associated to a given model in order to count how many tokens a sentence produces. 
+\subsubsection{scikit-learn}
+Scikit-learn is an open source machine learning library that supports supervised and unsupervised learning. It also provides various tools for model fitting, data preprocessing, model selection and evaluation, and many other utilities.
+\cite{scikit-learn}
+\subsubsection{NetworkX}
+NetworkX is a Python package for the creation, manipulation, and study of the structure, dynamics, and functions of complex networks. With NetworkX one can load and store networks in standard and nonstandard data formats, generate many types of random and classic networks, analyze network structure, build network models, design new network algorithms, draw networks, and much more.
+\cite{SciPyProceedings_11}
+\subsubsection{html, re}
+\begin{itemize}
+    \item \textbf{html}: this module defines a class HTMLParser which serves as the basis for parsing text files formatted in HTML (HyperText Mark-up Language) and XHTML. It has been used to clean up all the HTML tags and special characters present inside the body of the textual documents
+    \item \textbf{re}: this module provides regular expression matching operations. Regular expressions are characters patterns used to match different portion of a string. It is possible to manage these sub-strings, replacing, deleting, modifying the characters within. This module is heavily used for cleaning operations and for splitting operations
+\end{itemize}
+\subsubsection{SentenceTransformers}
+SentenceTransformers is a Python framework for state-of-the-art sentence, text and image embeddings. This library abstracts some of the biggest problems of transformers, like sentence length, embedding averaging, even similarity is provided inside the package. In this project, has been only used the embedding extraction part that takes car of all the concerning aspects.
+\cite{sentence-transformers}
 \subsection{Cluster settings}
-\section{Results - esperimenti selezionati con risultati}
+In order to perform all the experiments, these are the settings:
+\begin{itemize}
+    \item Databricks
+    \item 13 nodes cluster
+    \item Python
+    \item PySpark
+    \item Libraries: numpy, scikit-learn, transformers, sentence-transformers, html, re, scipy, networkx
+\end{itemize}
+This setting allowed to execute an entire experiment, so from dataset cleaning to evaluation, in a time between one and three hours, depending on the transformer model.
+\section{Results}
+\todo[inline]{insert result introduction with general table}
+\subsection{Best result}
+\begin{itemize}
+    \item \textbf{Document cleaning}
+    \item \textbf{Document preprocessing}
+    \item \textbf{Numerosity reduction}
+    \item \textbf{Scoring method}
+\end{itemize}
+\todo[inline]{insert table result}
+\subsection{Average result}
+\begin{itemize}
+    \item \textbf{Document cleaning}
+    \item \textbf{Document preprocessing}
+    \item \textbf{Numerosity reduction}
+    \item \textbf{Scoring method}
+\end{itemize}
+\todo[inline]{insert table result}
+\subsection{Worst result}
+\begin{itemize}
+    \item \textbf{Document cleaning}
+    \item \textbf{Document preprocessing}
+    \item \textbf{Numerosity reduction}
+    \item \textbf{Scoring method}
+\end{itemize}
+\todo[inline]{insert table result}
 \end{document}

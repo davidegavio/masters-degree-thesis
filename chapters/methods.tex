@@ -1,7 +1,43 @@
 \providecommand{\main}{..}
 \documentclass[\main/main.tex]{subfiles}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+}
+
 \begin{document}
 \chapter{Methods}
+\label{methods}
 In this chapter there will be an explanation of what every single service does. Due to legal reasons in this manuscript there won't be any code or dataset example. Each service component will be explained through a pseudocode representation
 \todo[inline]{finish introduction for chapter}
 All services are Jupyter notebooks. They exploit the parallelization ability of PySpark, working on several lines at the same time using Map-Reduce approach.
@@ -105,35 +141,145 @@ This service is the core of the framework: decision made in this service constit
      \KwData{Cleaned dataset}
      \KwResult{Filtered dataset}
      initialization
-     join cleaned and filter dataset
-     \Return filtered dataset with rows that are part of both datasets
+     \ForEach{document split}{
+        \If{split length > threshold}{
+            further split\\
+            splits embedding extraction
+            }
+        \Else{
+            split embedding extraction
+            } 
+        }
+     \Return embedded dataset
      \caption{Embedding extraction}
     \end{algorithm}
 \end{center}
-\todo[inline]{write pseudocode for embedding extraction}
 
 \subsection{Numerosity reduction}
-\todo[inline]{insert explanation for numerosity reduction}
-
+Working with long documents ends up in having very long sets of vectors: their dimension remains the same because every extraction is performed with the same model, but their numerosity may vary: a document with 10 sentences has 10 different vectors, and so on. Depending on the model used, these vectors may increase the memory size of the document in a consistent way. A mechanism of vector numerosity reduction: in this way it's possible to reduce the memory consumption sacrificing some informative content. The implemented algorithm inside the framework is a service that exploits cosine similarity in order to reduce the vector number: after computing the internal similarity of the cartesian product of all sentences inside a document, the minimum spanning tree is extracted. Every sentence is considered a node in a fully connected graph and the minimum spanning tree defines the path to follow in order to find highly similar sentences: if two sentences are similar over a given threshold, the two vectors are merged reducing the numerosity. \\
+\textbf{Graph}:
+A graph is a diagram of vertices or nodes connected by edges.
+\begin{center}
+    \begin{figure}[h]
+    \centering
+    \includegraphics[scale=1]{images/methods/graph_example.png}
+    \caption{Graph example}
+    \label{fig:graph_example}
+\end{figure}
+\end{center}
+Black dots constitutes the set of nodes while the lines constitute the set of edges. Edges may have a value called weight. \cite{Siu1998IntroductionTG}\\
+\textbf{Fully connected graph}:
+A fully connected graph is a graph in which every node is connected to all other nodes. \cite{Siu1998IntroductionTG}
+\begin{center}
+    \begin{figure}[h]
+    \centering
+    \includegraphics[scale=1]{images/methods/fully_connected_graph_example.png}
+    \caption{Fully connected graph example}
+    \label{fig:fully_connected_graph_example}
+\end{figure}
+\end{center}
+\textbf{Matrix representation}: 
+Given a graph G with vertices labelled {1, 2, ...,$n$}, its \textit{adjacency matrix} A is a $n \times m$ matrix whose $ij$-th entry is the number of edges joining vertex i and vertex j. If, in addition, the edges are labelled {1, 2,... , $m$}, its \textit{incidence matrix} M is the $n \times m$ matrix whose $ij$-th entry is 1 if vertex $i$ is incident to edge $j$, and 0 otherwise. If the edges have a weight, its \textit{weight matrix} W is the $n \times m$ matrix whose $ij$-th entry is the weight of the edge connecting vertex $i$ and vertex $j$.
+\begin{align}
+A &= \begin{bmatrix}
+    1 & 0 & 1 & 0\\
+    0 & 0 & 0 & 0\\
+    1 & 0 & 1 & 0\\
+    1 & 0 & 1 & 0
+\end{bmatrix}
+&
+M &= \begin{bmatrix}
+    1 & 0 & 1 & 0\\
+    0 & 0 & 0 & 0\\
+    1 & 0 & 1 & 0\\
+    1 & 0 & 1 & 0
+\end{bmatrix}
+&
+W &= \begin{bmatrix}
+    1 & 0 & 1 & 0\\
+    0 & 0 & 0 & 0\\
+    1 & 0 & 1 & 0\\
+    1 & 0 & 1 & 0
+\end{bmatrix}
+\end{align}
+\todo[inline]{write correct matrices}
+\textbf{Minimum spanning tree}: An edge-weighted graph is a graph where we associate weights or costs with each edge. A minimum spanning tree (MST) of an edge-weighted graph is a spanning tree whose weight (the sum of the weights of its edges) is no larger than the weight of any other spanning tree.
+\begin{center}
+    \begin{figure}[h]
+    \centering
+    \includegraphics[scale=1.25]{images/methods/mst_example.png}
+    \caption{MST example}
+    \label{fig:mst_example}
+\end{figure}
+\end{center}
+\cite{books/daglib/0029345}\\
+\subsubsection{Graph numerosity reduction pseudocode}
+\begin{center}
+    \begin{algorithm}[H]
+     \KwData{Embedded dataset}
+     \KwResult{Reduced dataset}
+     initialization\\
+     weight matrix calculation\\
+     minimum spanning tree calculation\\
+     \ForEach{edge in MST}{
+        \If{edge weight > similarity threshold}{
+            merge similar sentence embeddings\\
+            recompute weight matrix\\
+            recompute MST
+            }   
+        }
+     \Return filtered dataset with rows that are part of both datasets
+     \caption{Numerosity reduction}
+    \end{algorithm}
+\end{center}
+In order to be able to perform this reduction, in this framework it is used \textit{SciPy} \cite{2020SciPyNMeth} package with its features: to compute the weight matrix is used \textit{cosine\_distances} method, while for MST computation is used \textit{minimum\_spanning\_tree} method.
 \subsection{Similarity scoring}
 In order to complete a similarity search task, a way of scoring this similarity is needed. The generated embeddings as terms of a given similarity function. 
 \subsubsection{Long documents problem}
 Working with long documents is not trivial, due to intrinsic limitations of transformer models. As said, each model has an input sequence maximum length that cannot be exceeded because it will lead to errors in vectorized representation (sequence truncation, exception raising, ...). A possible solutions to this problem could be averaging all the vectors of different sentences that constitute the original text. The higher the number of sentences, the higher the information dilution: the final vector will be a vector that doesn't truly represent anything inside the original text, leading to high similarity scores even if the original documents are very different. In the next subsection will be presented the chosen similarity scoring approach.
 \subsubsection{Similarity scoring algorithm}
-As previously mentioned, working with long documents is not that easy. Starting from the cleaning phase where text bodies are divided in sentences, it has been decided to use a \textit{voting} approach. The voting approach allows to compare documents using the sentences that compose them, allowing in this way to let each sentence "choose" its most similar sentence of the other document. The similarity is calculated using cosine similarity, which has been observed to work well in semantic similarity fields. The choice of the most similar sentence is performed keeping the highest scoring sentence in the research document and its score. To give a final result, the algorithm summarizes a final score computing one last operation (mean, median, ...) on the list of highest scoring sentences scores chosen by query sentences. The pseudocode is visible below:
+As previously mentioned, working with long documents is not that easy. Starting from the cleaning phase where text bodies are divided in sentences, it has been decided to use a \textit{voting} approach. The voting approach allows to compare documents using the sentences that compose them, allowing in this way to let each sentence "choose" its most similar sentence from other document. The similarity is calculated using cosine similarity, which has been observed to work well in semantic similarity fields. The choice of the most similar sentence is performed keeping the highest scoring sentence in the research document and its score. To give a final result, the algorithm summarizes a resulting score computing one last operation (mean, median, ...) on the list of highest scoring sentences scores chosen by query sentences. The service produces a \textit{result dataset} with rows built in the following way:
+\\
+\begin{center}
+    \begin{lstlisting}[language=json, caption="Parameter message example", captionpos=b]
+        {
+         "query_document_key": "query_key",
+         "search_document_key": "search_key",
+         "score": 0.8
+        }
+    \end{lstlisting}
+\end{center}
+The pseudocode is visible below:
 \begin{center}
     \begin{algorithm}[H]
-     \KwData{Cleaned dataset}
-     \KwResult{Filtered dataset}
-     initialization
-     join cleaned and filter dataset
-     \Return filtered dataset with rows that are part of both datasets
-     \caption{Embedding extraction}
+     \KwData{Query document}
+     \KwData{Search document}
+     \KwResult{Scores dataset}
+     initialization\\
+     \ForEach{sentence in query document}{
+        \ForEach{sentence in search document}{
+            compute cosine similarity 
+            }
+        choose most similar sentence
+        }
+     compute final score\\
+     \Return score
+     \caption{Scoring algorithm}
     \end{algorithm}
 \end{center}
-\todo[inline]{write pseudocode for scoring algorithm}
-
 
 \section{Evaluation}
-\todo[inline]{write evaluation explanation]}
+After computing all necessary scores, in order to understand if the hyperparameters configuration works well it's mandatory to define an evaluation method. The evaluation method is mandatory in order to have a reliable set of hyperparameters. \\
+\subsection{Baseline dataset}
+In order to perform an evaluation the definition of a baseline dataset is mandatory. The baseline dataset used throughout the project is constituted by 10 query document and each one has associated 10 search documents: of these 10 documents, 5 are adherent to the query and 5 are not adherent.
+\subsection{Evaluation method}
+To understand if the framework is working well, it has been decided to focus on two main aspects:
+\begin{itemize}
+    \item \textbf{Classification precision}: the first aspect to consider is if the framework is able to give back the same results that a human would give back to a query search
+    \item \textbf{Difference between right and wrong}: the second aspect to consider is how differently the system scores right and wrong search documents
+\end{itemize}
+\subsubsection{Evaluation metrics}
+\paragraph{Precision@n} In order to understand how precise is the framework, it has been used an evaluation metric called \textit{precision}: recalling the structure of the baseline dataset, where there are 5 correct documents and 5 incorrect documents for each query, the computed scores are ordered in descending order: the number of correct placed documents (first half for adherent documents, second half for non adherent documents) denotes the precision for that given query. Precision denotes the proportion of predicted positive cases that are correctly Real Positives. \cite{DBLP:journals/corr/abs-2010-16061}\\
+As the name says, Precision@n is an evaluation metric computed on the $n$ corpus elements: for a given query the resulting measure is \textit{precision@10}, where 10 are the documents associated to the given query. For a given set of queries with mutually exclusive documents associated, the final will be the sum of these precisions: for example, for 10 queries there will be a \textit{precision@100} score.
+\paragraph{Difference mean/median} The other aspect which deserves particular attention, is the difference between right and wrong documents. In order to have a reliable framework, it's necessary not only that it assigns right documents to right queries, it would be better if it could be able to strongly differentiate right documents from wrong ones. In order to measure this metric, the system performs the mean of median of similarity scores assigned to right documents in baseline and computes the difference with the mean or median form wrong ones: the higher the difference, the higher the difference the better the result. An high score for these metrics would mean that the system can well recognize right documents, resulting in a more reliable result. 
 \end{document}

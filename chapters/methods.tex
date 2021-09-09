@@ -38,11 +38,10 @@
 \begin{document}
 \chapter{Methods}
 \label{methods}
-In this chapter there will be an explanation of what every single service does. Due to legal reasons in this manuscript there won't be any code or dataset example. Each service component will be explained through a pseudocode representation
-\todo[inline]{finish introduction for chapter}
-All services are Jupyter notebooks. They exploit the parallelization ability of PySpark, working on several lines at the same time using Map-Reduce approach.
+In this chapter there will be an explanation of what every single service does. Due to legal reasons in this manuscript there won't be any code or dataset example. Each service component will be explained through a pseudocode representation in order to make the whole system more understandable.\\
+All services are Jupyter notebooks that exploit the parallelization ability of PySpark, working on several rows at the same time using Map-Reduce approach which is the go to solution in big data field.
 \section{Preprocessing}
-As said in \textit{Architecture} chapter, this is the phase where the dataset is elaborated in order to be used further on. 
+As said in \emph{Architecture} chapter, this is the phase where the dataset is elaborated in order to be used further on. 
 \subsection{Cleaning}
 Given a textual dataset, cleaning service performs all the operations needed to have cleaned and well formed documents.
 \subsubsection{HTML cleaning}
@@ -135,7 +134,32 @@ In some applications, it is needed to reduce the number of records inside a data
 \section{Processing}
 This category includes services that generate the information needed to perform all similarity tasks of the framework. Ideally, these services work on a cleaned dataset, so they are the next step of preprocessing services. 
 \subsection{Embedding extraction}
-This service is the core of the framework: decision made in this service constitute the biggest discriminant of the framework. Using a given model, it converts sentences into vectorial representations (embedding). This is possible using a library called SentenceTransformers \cite{sbert}, based on their original work \textit{Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks} \cite{reimers2019sentencebert}. SentenceTransformers allows to choose a transformer model from either the library itself or from another repository of transformer models: \textit{Huggingface} \cite{huggingface}. SentenceTransformers abstracts all the tokenization and averaging logics: given a sentence, it is tokenized, for each token it is extracted a n-dimensional vector (e.g. 768) and finally those vectors are averaged in order to obtain a single n-dimensional vector. To overcome the problem of transformer model longest manageable sequence, the service performs a tokenization, using the model tokenizer, in order to check if the input sentence is manageable by the chosen model. If it's longer, the sentence is splitted in order to perform the extraction without any problem. The pseudocode is visible below:
+This service is the core of the framework: decision made in this service constitute the biggest discriminant of the framework. Using a given model, it converts sentences into vectorial representations (embedding). This is possible using a library called SentenceTransformers \cite{sbert}, based on their original work \emph{Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks} \cite{reimers2019sentencebert}. SentenceTransformers allows to choose a transformer model from either the library itself or from another repository of transformer models: \emph{Huggingface} \cite{huggingface}. Here below is visible the list of Transformer families with a short description that have been used during the project:
+\begin{itemize}
+    \item \textbf{BERT}
+    \item \textbf{ALBERT}
+    \item \textbf{DistilBERT}
+    \item \textbf{MPNET}
+    \item \textbf{XLM}
+\end{itemize} 
+\paragraph{BERT}
+BERT has been the first transformer model released after Vaswani's. It has been released and open sourced by Google, reaching the state-of-the-art for NLP. Looking at their blog post \cite{bert_blog_post}, BERT can represent a word using its surrounding context, contextualizing the representation. BERT has been the first deeply bidirectional, unsupervised language representation, pretrained using only a plain text corpus\cite{DBLP:journals/corr/abs-1810-04805}.
+\paragraph{ALBERT}
+Like BERT, ALBERT has been released by Google. Looking at their blog post \cite{albert_blog_post}, ALBERT implements two main design changes respecting to BERT, in order to optimize the performances. The first change is to factorize the embedding parametrization, splitting the embedding matrix between input-level embeddings with a relatively-low dimension, while the hidden-layer embeddings use higher dimensionalities. The second aspect on which ALBERT focuses is layer stacking: differently from BERT, in ALBERT there is a parameter sharing across the layers, resulting in a slightly diminished accuracy while reducing the size of the model\cite{DBLP:journals/corr/abs-1909-11942}.
+\paragraph{MPNET}
+MPNET has been released by Microsoft in 2020. As visible from their blog post \cite{mpnet_blog_post},  researchers that developed MPNET, realized that two of the main pretraining tasks of transformers, masked language modeling adopted in BERT and permuted language modeling adopted in XLNet, have different limitations. They came up with and approach that inherits the advantages of MLM and PLM and avoids their limitations. Masked language modeling (MLM) is proposed in BERT, which randomly masks some tokens with a masked symbol [M] and predicts the masked tokens given remaining tokens. Permuted language modeling (PLM) is proposed in XLNet, which randomly permutes a sequence and predicts the tokens in the right part (predicted part) in an autoregressive way. PLM can model the dependency among the predicted tokens with autoregressive prediction, but it cannot see the position information of the full sentence, which will cause mismatches between the pretraining and fine-tuning since the position information of the full sentence can be seen in the downstream tasks. MPNet, uses masked and permuted language modeling to model the dependency among predicted tokens and see the position information of the full sentence\cite{DBLP:journals/corr/abs-2004-09297}.
+\paragraph{DistilBERT}
+DistilBERT has been released by HuggingFace engineers in 2019. They focused on the problem of growing model size and how to put in production such models. From their blog post \cite{distilbert_blog_post}, they used the \emph{distillation} technique to compress a large model into a smaller model.\\
+\textbf{Distillation}: Knowledge distillation (sometimes also referred to as teacher-student learning) is a compression technique in which a small model is trained to reproduce the behavior of a larger model (or an ensemble of models). It was introduced by Bucila et al.\cite{10.1145/1150402.1150464} and generalized by Hinton et al.\cite{hinton2015distilling} a few years later\cite{DBLP:journals/corr/abs-1910-01108}.
+\paragraph{XLM}
+XLM transformer has been released by Facebook, in 2019. As visible by their blog post \cite{xlm_blog_post}, researchers at Facebook developed this transformer model to extend the pretraining for English language to other languages. XLM uses a known pre-processing technique (BPE) and a dual-language training mechanism with BERT in order to learn relations between words in different languages. First, instead of using word or characters as the input of the model, it uses Byte-Pair Encoding (BPE) that splits the input into the most common sub-words across all languages, thereby increasing the shared vocabulary between languages. Furthermore, it extends BERT architecture in two ways:
+\begin{itemize}
+    \item Each training sample consists of the same text in two languages, whereas in BERT each sample is built from a single language. As in BERT, the goal of the model is to predict the masked tokens, however, with the new architecture, the model can use the context from one language to predict tokens in the other, as different words are masked words in each language (they are chosen randomly).
+    \item The model also receives the language ID and the order of the tokens in each language, i.e. the Positional Encoding, separately. The new metadata helps the model learn the relationship between related tokens in different languages.
+\end{itemize}
+\cite{DBLP:journals/corr/abs-1901-07291}
+
+SentenceTransformers abstracts all the tokenization and averaging logics: given a sentence, it is tokenized, for each token it is extracted a n-dimensional vector (e.g. 768) and finally those vectors are averaged in order to obtain a single n-dimensional vector. To overcome the problem of transformer model longest manageable sequence, the service performs a tokenization, using the model tokenizer, in order to check if the input sentence is manageable by the chosen model. If it's longer, the sentence is splitted in order to perform the extraction without any problem. The pseudocode is visible below:
 \begin{center}
     \begin{algorithm}[H]
      \KwData{Cleaned dataset}
@@ -179,30 +203,29 @@ A fully connected graph is a graph in which every node is connected to all other
 \end{figure}
 \end{center}
 \textbf{Matrix representation}: 
-Given a graph G with vertices labelled {1, 2, ...,$n$}, its \textit{adjacency matrix} A is a $n \times m$ matrix whose $ij$-th entry is the number of edges joining vertex i and vertex j. If, in addition, the edges are labelled {1, 2,... , $m$}, its \textit{incidence matrix} M is the $n \times m$ matrix whose $ij$-th entry is 1 if vertex $i$ is incident to edge $j$, and 0 otherwise. If the edges have a weight, its \textit{weight matrix} W is the $n \times m$ matrix whose $ij$-th entry is the weight of the edge connecting vertex $i$ and vertex $j$.
+Given a graph G with vertices labelled {1, 2, ...,$n$}, its \emph{adjacency matrix} A is a $n \times m$ matrix whose $ij$-th entry is the number of edges joining vertex i and vertex j. If, in addition, the edges are labelled {1, 2,... , $m$}, its \emph{incidence matrix} M is the $n \times m$ matrix whose $ij$-th entry is 1 if vertex $i$ is incident to edge $j$, and 0 otherwise. If the edges have a weight, its \emph{weight matrix} W is the $n \times m$ matrix whose $ij$-th entry is the weight of the edge connecting vertex $i$ and vertex $j$.
 \begin{align}
 A &= \begin{bmatrix}
-    1 & 0 & 1 & 0\\
-    0 & 0 & 0 & 0\\
-    1 & 0 & 1 & 0\\
-    1 & 0 & 1 & 0
+    0 & 3 & 3 & 3\\
+    3 & 0 & 3 & 3\\
+    3 & 3 & 0 & 3\\
+    3 & 3 & 3 & 0
 \end{bmatrix}
 &
 M &= \begin{bmatrix}
-    1 & 0 & 1 & 0\\
-    0 & 0 & 0 & 0\\
-    1 & 0 & 1 & 0\\
-    1 & 0 & 1 & 0
+    0 & 1 & 1 & 1\\
+    1 & 0 & 1 & 1\\
+    1 & 1 & 0 & 1\\
+    1 & 1 & 1 & 0
 \end{bmatrix}
 &
 W &= \begin{bmatrix}
-    1 & 0 & 1 & 0\\
-    0 & 0 & 0 & 0\\
-    1 & 0 & 1 & 0\\
-    1 & 0 & 1 & 0
+    0 & 0.20 & 0.60 & 0.40\\
+    0.20 & 0 & 0.25 & 0.35\\
+    0.60 & 0.25 & 0 & 0.15\\
+    0.40 & 0.35 & 0.15 & 0
 \end{bmatrix}
 \end{align}
-\todo[inline]{write correct matrices}
 \textbf{Minimum spanning tree}: An edge-weighted graph is a graph where we associate weights or costs with each edge. A minimum spanning tree (MST) of an edge-weighted graph is a spanning tree whose weight (the sum of the weights of its edges) is no larger than the weight of any other spanning tree.
 \begin{center}
     \begin{figure}[h]
@@ -232,13 +255,13 @@ W &= \begin{bmatrix}
      \caption{Numerosity reduction}
     \end{algorithm}
 \end{center}
-In order to be able to perform this reduction, in this framework it is used \textit{SciPy} \cite{2020SciPyNMeth} package with its features: to compute the weight matrix is used \textit{cosine\_distances} method, while for MST computation is used \textit{minimum\_spanning\_tree} method.
+In order to be able to perform this reduction, in this framework it is used \emph{SciPy} \cite{2020SciPyNMeth} package with its features: to compute the weight matrix is used \emph{cosine\_distances} method, while for MST computation is used \emph{minimum\_spanning\_tree} method.
 \subsection{Similarity scoring}
 In order to complete a similarity search task, a way of scoring this similarity is needed. The generated embeddings as terms of a given similarity function. 
 \subsubsection{Long documents problem}
 Working with long documents is not trivial, due to intrinsic limitations of transformer models. As said, each model has an input sequence maximum length that cannot be exceeded because it will lead to errors in vectorized representation (sequence truncation, exception raising, ...). A possible solutions to this problem could be averaging all the vectors of different sentences that constitute the original text. The higher the number of sentences, the higher the information dilution: the final vector will be a vector that doesn't truly represent anything inside the original text, leading to high similarity scores even if the original documents are very different. In the next subsection will be presented the chosen similarity scoring approach.
 \subsubsection{Similarity scoring algorithm}
-As previously mentioned, working with long documents is not that easy. Starting from the cleaning phase where text bodies are divided in sentences, it has been decided to use a \textit{voting} approach. The voting approach allows to compare documents using the sentences that compose them, allowing in this way to let each sentence "choose" its most similar sentence from other document. The similarity is calculated using cosine similarity, which has been observed to work well in semantic similarity fields. The choice of the most similar sentence is performed keeping the highest scoring sentence in the research document and its score. To give a final result, the algorithm summarizes a resulting score computing one last operation (mean, median, ...) on the list of highest scoring sentences scores chosen by query sentences. The service produces a \textit{result dataset} with rows built in the following way:
+As previously mentioned, working with long documents is not that easy. Starting from the cleaning phase where text bodies are divided in sentences, it has been decided to use a \emph{voting} approach. The voting approach allows to compare documents using the sentences that compose them, allowing in this way to let each sentence "choose" its most similar sentence from other document. The similarity is calculated using cosine similarity, which has been observed to work well in semantic similarity fields. The choice of the most similar sentence is performed keeping the highest scoring sentence in the research document and its score. To give a final result, the algorithm summarizes a resulting score computing one last operation (mean, median, ...) on the list of highest scoring sentences scores chosen by query sentences. The service produces a \emph{result dataset} with rows built in the following way:
 \\
 \begin{center}
     \begin{lstlisting}[language=json, caption="Parameter message example", captionpos=b]
@@ -279,7 +302,7 @@ To understand if the framework is working well, it has been decided to focus on 
     \item \textbf{Difference between right and wrong}: the second aspect to consider is how differently the system scores right and wrong search documents
 \end{itemize}
 \subsubsection{Evaluation metrics}
-\paragraph{Precision@n} In order to understand how precise is the framework, it has been used an evaluation metric called \textit{precision}: recalling the structure of the baseline dataset, where there are 5 correct documents and 5 incorrect documents for each query, the computed scores are ordered in descending order: the number of correct placed documents (first half for adherent documents, second half for non adherent documents) denotes the precision for that given query. Precision denotes the proportion of predicted positive cases that are correctly Real Positives. \cite{DBLP:journals/corr/abs-2010-16061}\\
-As the name says, Precision@n is an evaluation metric computed on the $n$ corpus elements: for a given query the resulting measure is \textit{precision@10}, where 10 are the documents associated to the given query. For a given set of queries with mutually exclusive documents associated, the final will be the sum of these precisions: for example, for 10 queries there will be a \textit{precision@100} score.
+\paragraph{Precision@n} In order to understand how precise is the framework, it has been used an evaluation metric called \emph{precision}: recalling the structure of the baseline dataset, where there are 5 correct documents and 5 incorrect documents for each query, the computed scores are ordered in descending order: the number of correct placed documents (first half for adherent documents, second half for non adherent documents) denotes the precision for that given query. Precision denotes the proportion of predicted positive cases that are correctly Real Positives\cite{DBLP:journals/corr/abs-2010-16061}.\\
+As the name says, Precision@n is an evaluation metric computed on the $n$ corpus elements: for a given query the resulting measure is \emph{precision@10}, where 10 are the documents associated to the given query. For a given set of queries with mutually exclusive documents associated, the final will be the sum of these precisions: for example, for 10 queries there will be a \emph{precision@100} score.
 \paragraph{Difference mean/median} The other aspect which deserves particular attention, is the difference between right and wrong documents. In order to have a reliable framework, it's necessary not only that it assigns right documents to right queries, it would be better if it could be able to strongly differentiate right documents from wrong ones. In order to measure this metric, the system performs the mean of median of similarity scores assigned to right documents in baseline and computes the difference with the mean or median form wrong ones: the higher the difference, the higher the difference the better the result. An high score for these metrics would mean that the system can well recognize right documents, resulting in a more reliable result. 
 \end{document}

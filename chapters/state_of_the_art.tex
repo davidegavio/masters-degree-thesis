@@ -1,0 +1,105 @@
+\providecommand{\main}{..}
+\documentclass[\main/main.tex]{subfiles}
+
+\begin{document}
+\chapter{State of the art}
+
+\section{Text representation}
+In order to be used, textual data needs to be represented in a more usable format. Textual representation can be divided in not contextualized and contextualized: not contextualized representation focuses only on words or subwords, without looking neither to local nor global context. On the other hand, contextualized approaches, try to draw the big picture, representing texts in the corpus using a representation that emphasizes the context and what are the relationships among words. Contextualized approaches try to give a more semantic representation of texts.
+\subsection{Not contextualized}
+As previously said, not contextualized textual representations focus only on words or subwords, without giving importance to local or global context. In this paragraph there is a list of the main not contextualized approaches to represent text. 
+\subsubsection{Bag of Words (BoW)}
+A BoW is a way for extracting features from textual data. First of all BoW creates a vocabulary of terms present in document set. Using this vocabulary of words, it measures the occurrences of words in a single document. At the and, a document will be represented as a bag of its words that keeps the concept of multiplicity using term frequency. Every other information apart from term frequencies are discarded.
+A short example is visible below:
+\begin{center}
+    Sentence 1: \emph{The cat sat on the hat}\\
+    Sentence 2: \emph{The dog ate the cat and the hat}\\
+    Vocabulary: \{the, cat, sat, on, hat, dog, ate, and\}\\
+    BoW Sentence 1: \{2, 1, 1, 1, 1, 0, 0, 0\}\\
+    BoW Sentence 2: \{3, 1, 0, 0, 1, 1, 1, 1\}
+\end{center}
+In text similarity context, if two documents are similar their bags of words will be similar looking at term frequencies. The above example shows two different sentences: looking at just the vocabulary and the BoWs, it is noticeable that the two original sentences have something about the \emph{cat} in common, but the rest of the two sentences are very dissimilar. Some examples of BoW implementations are shortly described here below:
+\begin{itemize}
+    \item \textbf{Bag of Tricks for Efficient Text Classification}: in this paper, BoW is used to represent sentences in order to define a baseline for text classification \cite{Joulin2017BagOT}
+    \item \textbf{Microblog Sentiment Analysis Based on Cross-media Bag-of-words Model}: in this paper, Bow is used to provide a unite representation of both text and image from microblog messages. This representation is then used to classify the sentiment of the message using a logistic regression \cite{Wang2014MicroblogSA}
+    \item \textbf{SOFTCARDINALITY-CORE: Improving Text Overlap with Distributional Measures for Semantic Textual Similarity}: in this paper, BoW is used to represent pair of texts with an associated weight for each word. This representation is then used to test three novel similarity measures presented in the paper \cite{Jimnez2013SOFTCARDINALITYCOREIT}
+\end{itemize}
+\subsubsection{TF/IDF}
+TF/IDF represents an enhancement of the BoW approach: it is a numerical measure that works on term-document pairs. TF/IDF consist of:
+\begin{itemize}
+    \item Term frequency: refers to the number of times that a term t occurs in document d
+    \begin{center}
+        $d=document$\\
+        $t=term$\\
+        $f_t=$  occurrences of term t in document d\\
+        $n =$ total number of terms that appear in the document d \\
+        $TF(t) = f_t / n$
+    \end{center}
+    \item Inverse term frequency: is a measure of whether a term is common or rare in a given document corpus. It is obtained by dividing the total number of documents by the number of documents containing the term in the corpus \cite{NETTLETON2014171}
+    \begin{center}
+        $N_d = $ total number of documents\\
+        $N_t = $ number of documents containing term t\\
+        $IDF(t) = log_e(N_d/N_t)$
+    \end{center}
+    The final result is given by the product of TF and IDF terms. The higher the TF/IDF score, the rarer the term is in a document and vice versa.
+\end{itemize}
+Some examples of TF/IDF implementations are shortly described here below:
+\begin{itemize}
+    \item \textbf{KNN with TF-IDF Based Framework for Text Categorization}: in this paper, TF/IDF is used to determine a weight matrix of documents that will be further used with KNN algorithm to classify documents into groups that describe the content of the documents  \cite{Trstenjak2014KNNWT}
+    \item \textbf{A novel TF-IDF weighting scheme for effective ranking}: in this paper, a normalized version of TF/IDF is used to capture two different aspects of term saliency. One component of the term frequency is effective for short queries, while the other performs better on long queries. The final weight is then measured by taking a weighted combination of these components, which is determined on the basis of the length of the corresponding query. Furthermore, TF/IDF has been used to constitute a baseline used to evaluate the TF/IDF variations proposed in the paper \cite{Paik2013ANT}
+    \item \textbf{Text Mining: Use of TF-IDF to Examine the Relevance of Words to Documents}: in this paper, TF/IDF is used to find most relevant keywords from a collection of twenty random websites belonging to four different domains. Such keywords can describe those documents and can be used as tags to categorize the content \cite{Qaiser2018TextMU}
+\end{itemize}
+\subsubsection{Word embeddings}
+Word embeddings are a multidimensional representation for text. Word embeddings techniques represent words as real-valued dense vectors in a given vector space. The idea is to give a similar representation for words that are used in a similar way, in opposition with approaches like BoW where words with similar usage have different representation (unless explicitly managed). Some example of widely used text embeddings techniques are shortly described here below:
+\begin{itemize}
+    \item \textbf{Word2Vec}: given a large corpus of documents, Word2Vec is able to give a word representation based on its usage and occurrences. Word2Vec is a shallow two-layer neural network. Word2Vec has two different architectures: skip-gram and CBOW (Continuouos BoW). CBOW is similar to a feed-forward neural network, it tries to predict the correct word given a list of context words. To do that, after the network training, when a word is given in input Word2Vec produces a vector embedding using the hidden weights from the hidden layer. On the other hand, with the skip-gram approach, Word2vec predicts context words, which are words that surrounds the input word. Like CBOW, to produce an embedding vector for an input word, the network outputs the hidden weights after form the hidden layer after network training \cite{mikolov2013efficient}. Some examples of Word2Vec applications are shortly described here below:
+    \begin{itemize}
+        \item \textbf{Sentence Similarity Calculating Method Based on Word2Vec and Clustering}: in this paper, Word2Vec has been used to extract the semantic information of a given text and for retraining after a clustering phase. The approach consists in: 
+        \begin{itemize}
+            \item corpus preprocessing
+            \item Word2Vec training word vectors
+            \item clustering of document bodies by K-means algorithm
+            \item training the clustering results twice to get the word vector results after training
+            \item calculate the similarity based on the result of retraining
+        \end{itemize}
+        \cite{Song2020SentenceSC}
+        \item \textbf{Semantic relatedness and similarity of biomedical terms: examining the effects of recency, size, and section of biomedical publications on the performance of word2vec}: in this paper, Word2Vec has been used to derive a semantic representation of biomedical publication. This representation is then used to compute the similarity with biomedical terms from the same dataset. Reference standards are used to perform an evaluation of the performances of representations produced by Word2Vec \cite{Zhu2017SemanticRA}  
+    \end{itemize}
+    
+    \item \textbf{GloVe}: this approach relies on the idea that ratios of co-occurrence probabilities between words may encode a word meaning inside a multidimensional vector. The training objective is to learn word vectors such that their dot product equals the logarithm of the words' probability co-occurrence. The loss function associates the ratios of co-occurrence probabilities with vector differences in the word vector space \cite{pennington2014glove}.
+    Some examples of GloVe applications are shortly described here below:
+    \begin{itemize}
+        \item \textbf{Semantics derived automatically from language corpora contain human-like biases}: in this paper, GloVe has been used to produce a representation of words from the dataset. Those vector representation are then used to demonstrate that human \emph{biases} are propagated to Artificial Intelligence technologies \cite{Caliskan2017SemanticsDA}
+    \end{itemize}
+\end{itemize}
+\subsection{Contextualized}
+Contextualized embeddings have become the state of the art of vectorized representation of text. Incorporating context into word embeddings - as exemplified by BERT, ELMo, and GPT-2 - has proven to be a watershed idea in NLP. Replacing static vectors (e.g., word2vec) with contextualized word representations has led to significant improvements on virtually every NLP task \cite{stanford_contextualized_blog_post}. Browsing \emph{Papers with code} website \cite{paperswithcode}, which collects information about the scores achieved by different approaches on several NLP tasks, is possible to notice that every leaderboard of every different task is populated mostly by contextualized approaches like transformers. Different tasks like \emph{Sentiment Analysis}\cite{paperswithcode_sa}, \emph{Semantic Textual Similarity}\cite{paperswithcode_sts}, \emph{Text Classification}\cite{paperswithcode_tc}, \emph{Community Question Answering}\cite{paperswithcode_cqa}, \emph{Question Answering}\cite{paperswithcode_qa} and others, have all been performed by transformer technology with improved performances.
+\subsubsection{Transformers}
+Until massive adoption of transformer technology, the dominant sequence transduction models were based on complex recurrent or convolutional neural networks that include an encoder and a decoder.
+Transformers are a network architecture based only on attention mechanism, not explicitly exploiting recurrence and convolution, differently from previously adopted system like recurrent neural networks, long short-term memory and gated recurrent neural networks. Transformers are used to draw global dependencies between input and output. They are used to better handle long-range dependencies within a text. These technologies allow to represent texts in a more semantical way, better capturing context and relations among different parts of the text \cite{vaswani2017attention}. Transformers are the true state of the art in NLP field, since 2018 (year of BERT \cite{devlin2018bert}\cite{bert_blog_post} release) transformers are used in different fields that require a semantic representation of texts. Some examples of transformer applications are shortly described here below:
+\begin{itemize}
+    \item \textbf{tBERT: Topic Models and BERT Joining Forces for Semantic Similarity Detection}: in this paper, a transformer model called BERT (will be explained further in the document, in \emph{Experiments} chapter) is used to encode sentence pairs that are used with a topic model such as LDA to enhance BERT with topics addition. The result is an even better framework that shows performance improvement across all dataset present in the study \cite{Peinelt2020tBERTTM}
+    \item \textbf{SCIBERT: A Pretrained Language Model for Scientific Text}: in this paper, the base version of BERT has been trained on a large corpus of scientific text to address the lack of high-quality, large-scale labeled scientific data. It is then evaluated on a series of different tasks, such as: Named Entity Recognition, PICO Extraction, Text Classification, Relation Classification, Dependency Parsing, showing improved results compared to the base version of BERT \cite{Beltagy2019SciBERTAP}.
+\end{itemize}
+\subsection{Textual similarity}
+During the years, different similarity functions have been applied to compute the similarity between documents. Depending on the textual representation, there are three most used similarity measures: \emph{Cosine similarity}, \emph{Euclidean distance}, \emph{Jaccard similarity}. From the introduction of vectorized representations (contextualized or not contextualized) like transformers, the standard de facto for measuring similarity has become the cosine similarity.
+The current state-of-the-art of text similarity computation relies on three similarity functions:
+\begin{itemize}
+    \item \textbf{Cosine similarity}: the angle between two vectors is used to measure their similarity. For cosine similarity, the input text pair needs to be represented as a vector. An example of text representation is the \emph{term-frequency vector}, in which is contained the frequency of each word in the document. Let $x$ and $y$ be two vectors for comparison:
+    \begin{center}
+        sim(x, y) = $\frac{x \cdot y}{\lVert x \rVert \cdot \lVert y \rVert}$
+    \end{center}
+    where $\lVert x \rVert$ is the Euclidean norm of vector $x = (x_1, x_2,\dots, x_p)$ defined as \\$\sqrt{x^2_1 + x^2_2 + \dots + x^2_p}$. A cosine value of 0 means that the two vectors are at 90 degrees to each other (orthogonal) and have no match. The closer the cosine value to 1, the smaller the angle and the greater the match between vectors. \cite{cosine_HAN201239} \cite{Gomaa2013ASO}. Some examples of cosine similarity applications are shortly described here below:
+    \begin{itemize}
+        \item \textbf{Contextualized Embeddings based Transformer Encoder for Sentence Similarity Modeling in Answer Selection Task}: in this paper, cosine similarity is used as similarity measure for similarity between question answering type. For example, while choosing the correct answer for a given question, it is necessary to rank the candidate answers to find the most suitable. Cosine similarity is used to rank candidate answers, using both contextualized and not contextualized embedding vectors \cite{Laskar2020ContextualizedEB} 
+        \item \textbf{SemEval-2017 Task 1: Semantic Textual Similarity Multilingual and Crosslingual Focused Evaluation}: in this paper, cosine similarity is the scoring method used for the 2017 Semantic Textual Similarity (STS) shared task, which is a venue for assessing the current state of the art \cite{Cer2017SemEval2017T1}
+    \end{itemize}
+    \item \textbf{Euclidean distance}: it consists of the straight-line distance between two vectors, the square root of the sum of squared differences between corresponding elements of the two vectors. The two vectors, like cosine similarity, need to be numerical vectors so a given text must be converted to be used as input \cite{Gomaa2013ASO}. Given $x$ and $y$ vectors, the euclidean distance is computed as follows:
+    \begin{center}
+        $Euclidean Distance = \sqrt{\sum\limits_{i=1}^n (x_i+y_i)^2}$
+    \end{center}
+    The euclidean distance is less used than Cosine and Jaccard similarities, still in the paper \textbf{Document Clustering Based On Text Mining K-Means Algorithm Using Euclidean Distance Similarity} it is visible how euclidean distance has been used for tasks like cluster distance computation in K-Means clustering algorithm \cite{Lydia2018DocumentCB}.
+    \item \textbf{Jaccard similarity}: the jaccard similarity of sets $S$ and $T$ is $\frac{| S \cap T|}{|S \cup T|}$, that is, the ratio of the size of the intersection of $S$ and $T$ to the size of their union.\cite{leskovec_rajaraman_ullman_2020}\cite{Gomaa2013ASO}\\
+    Unlike cosine similarity or euclidean distance, jaccard similarity works on sets, so for a document an intuitive representation is the set of unique words for a given document. Jaccard similarity measures the proportion of common words to number of unique words in both documents and ranges between $0$ and $1$, with the first meaning that the two sets are completely disjoint, while the second states that the two object are exactly the same. An example of jaccard similarity usage is the paper \textbf{Measuring Performance of N-Gram and Jaccard-Similarity Metrics in Document Plagiarism Application}, in which jaccard similarity is used to score the similarity of a pair of documents in order to detect plagiarism \cite{Eka_Diana_2019}.
+\end{itemize}
+\end{document}

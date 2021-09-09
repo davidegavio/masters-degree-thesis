@@ -9,21 +9,21 @@ Modern applications require to deal with immense amount of data as quick as poss
     \item Social networks analysis
     \item Parallelizable computations
 \end{itemize}
-This parallelization is not achieved using a super computer that can handle the computation, but is achieved using "computing clusters". Computing clusters are large collections of commodity hardware, including conventional processors, connected by Ethernet network. The software stack begins with a new form of file system, called a “distributed file system,” which features much larger units than the disk blocks in a conventional operating system. Distributed file systems also provide replication of data or redundancy to protect against the frequent media failures that occur when data is distributed over thousands of low-cost compute nodes. \cite{leskovec_rajaraman_ullman_2020}
+This parallelization is not achieved using a super computer that can handle the computation, but is achieved using ``computing clusters''. Computing clusters are large collections of commodity hardware, including` conventional processors, connected by Ethernet network. The software stack begins with a new form of file system, called a ``distributed file system'', which features much larger units than the disk blocks in a conventional operating system. Distributed file systems also provide replication of data or redundancy to protect against the frequent media failures that occur when data is distributed over thousands of low-cost compute nodes\cite{leskovec_rajaraman_ullman_2020}.
 
 \subsection{Big data}
-Big data is high-volume, high-velocity and/or high-variety information assets that demand cost-effective, innovative forms of information processing that enable enhanced insight, decision making, and process automation.\cite{bigdatagartner}
+Big data is high-volume, high-velocity and/or high-variety information assets that demand cost-effective, innovative forms of information processing that enable enhanced insight, decision making, and process automation\cite{bigdatagartner}.
 \begin{itemize}
     \item \textbf{Volume}: the magnitude of data. Big data sizes could be terabytes or even petabytes
-    \item \textbf{Variety}: the structural heterogeneity in a dataset. Data could be structured, semi-structured or unstructured.
-    \item \textbf{Velocity}: data generation rate. Data analysis speed is a strongly connected concept: higher the velocity, higher the needed analysis speed.
+    \item \textbf{Variety}: the structural heterogeneity in a dataset. Data could be structured, semi-structured or unstructured
+    \item \textbf{Velocity}: data generation rate. Data analysis speed is a strongly connected concept: higher the velocity, higher the needed analysis speed
 \end{itemize}
-Other mentioned dimensions:
+Other mentioned dimensions that are not part of the ``core'' definition:
 \begin{itemize}
     \item \textbf{Veracity}: the unreliability of some data sources. For example, social media sentiments are a uncertain data source, because they imply human judgement
-    \item \textbf{Variability}: the variation in data flow rates
+    \item \textbf{Variability}: the variation in data flow rates. Data could be produced by sources at not constant rates
     \item \textbf{Complexity}: the heterogeneity of data sources. Being generated through a myriad of sources, big data must be cleaned and connected in order to be used
-    \item \textbf{Value}: the importance of big data. Being characterized by a "low value density", a big quantity must be analyzed in order to obtain an high value
+    \item \textbf{Value}: the importance of big data. Being characterized by a ``low value density'', a big quantity must be analyzed in order to obtain an high value and be remunerative
 \end{itemize}\cite{Gandomi2015BeyondTH}
 \subsection{Distributed file system}
 To exploit cluster computing, data must be organized differently from the conventional file systems of single computers. This new organization is called Distributed file system (DFS) and is used as follows:
@@ -34,7 +34,7 @@ To exploit cluster computing, data must be organized differently from the conven
 Files are divided into chunks. Chunks are replicated on different computer nodes. If chunks are replicated on different racks so that a rack fail won't cause any data loss.
 Examples of DFS are:
 \begin{itemize}
-    \item Google File System (GFS), the original of the class
+    \item Google File System (GFS), the first of the class
     \item Hadoop Distributed File System (HDFS), an open-source DFS used with Hadoop
     \item Colossus, an improved version of GFS
 \end{itemize}
@@ -45,7 +45,7 @@ Examples of DFS are:
     \label{fig:racks_dfs}
 \end{figure}
 \textbf{Rack failure}: If any problem causes the rack to not be able to intercommunicate with other racks.
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/cluster_computing/hdfs_architecture.png}
     \caption{HDFS  architecture}
@@ -54,10 +54,10 @@ Examples of DFS are:
 \subsection{MapReduce}
 MapReduce is a style of computing that is used to manage many large-scale, parallel computations in a way that is tolerant of hardware faults. A MapReduce computation consists of:
 \begin{itemize}
-    \item Map tasks: takes in input one or more data chunks and returns a sequence of \textit{key-value} pairs
-    \item Reduce tasks: combine all the values associated with a key, one key at a time
+    \item Map tasks: takes in input one or more data chunks and returns a sequence of \emph{key-value} pairs
+    \item Reduce tasks: combines all the values associated with a key, one key at a time
 \end{itemize}
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/cluster_computing/map_reduce_schema.png}
     \caption{MapReduce}
@@ -69,13 +69,13 @@ The input files for a Map task are elements of any type: tuple, document, \dots 
 A chunk is a collection of elements, and no element is stored across two chunks. 
 A Map task produces zero or more key-value pairs, with keys not necessarily uniques.
 \subsubsection{Grouping by key}
-Once the Map task is over, all key-value pairs are grouped by key, with a single list of values associated to that key
+Once the Map task is over, all key-value pairs are grouped by key, with a single list of values associated to that key.
 \subsubsection{Reduce task}
-A Reduce task takes as input a pair of key, list of values associated to that key. The task produces a sequence of zero or more key-value pairs as output. The function that is applied on the list of values for a given key is called \textit{reducer}. For each Reduce task, there could be more reducers.
+A Reduce task takes as input a pair of key, list of values associated to that key. The task produces a sequence of zero or more key-value pairs as output. The function that is applied on the list of values for a given key is called \emph{reducer}. For each Reduce task, there could be more reducers.
 \subsubsection{MapReduce execution}
 \begin{itemize}
     \item The user program forks a Master controller process and some Worker processes at different compute nodes. A Worker handles Map tasks or Reduce tasks, but not both
-    \item According to the user program, the Master creates a given number of Map and Reduce tasks and assigns them to the Workers. 
+    \item According to the user program, the Master creates a given number of Map and Reduce tasks and assigns them to the Workers
     \item The Master keeps track of the status of each Map and Reduce task (idle, executing, completed) and when a Worker finishes a task, the Master schedules a new task for that Worker
 \end{itemize}
 \subsubsection{Node failure}
@@ -85,7 +85,7 @@ A Reduce task takes as input a pair of key, list of values associated to that ke
     \item If a Reduce worker fails, its Reduce tasks will be put to idle status and rescheduled on another Reduce worker
 \end{itemize}
 \subsection{Spark}
-\textbf{Workflow systems}: Workflow systems extend MapReduce from the simple two-step workflow (the Map function feeds the Reduce function) to any collection of functions, with an acyclic graph representing workflow among the functions. That is, there is an acyclic flow graph whose arcs a → b represent the fact that function a’s output is an input to function b. \cite{leskovec_rajaraman_ullman_2020}
+\textbf{Workflow systems}: Workflow systems extend MapReduce from the simple two-step workflow (the Map function feeds the Reduce function) to any collection of functions, with an acyclic graph representing workflow among the functions. That is, there is an acyclic flow graph whose arcs a → b represent the fact that function a’s output is an input to function b \cite{leskovec_rajaraman_ullman_2020}.
 Spark is and advanced workflow system, because of:
 \begin{itemize}
     \item A more efficient failure handling
@@ -108,14 +108,14 @@ Like Hadoop or other MapReduce implementations, Spark manage large RDDs in the s
 \paragraph{Lazy evaluation}
 The first difference from other MapReduce implementations, is that Spark is lazy evaluated: transformations are not applied on an RDD until it is required to do so, tipically in correspondence of an action.
 \paragraph{Resilience of RDDs}
-Performing operations on RDDs, creates a \textit{lineage} of those RDDs, so that in case of failure, Spark is able to recreate the RDD (or just a split) looking at its lineage.
+Performing operations on RDDs, creates a \emph{lineage} of those RDDs, so that in case of failure, Spark is able to recreate the RDD (or just a split) looking at its lineage.
 
 
 
 \section{Transformers}
 Transformers \allowbreak\cite{vaswani2017attention} are an architecture based only on attention mechanism, dispensing with recurrence and convolutions. Transformers are used to draw global dependencies between input and output.
 \subsection{Architecture}
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/transformer/transformer_model_architecture.png}
     \caption{Transformer architecture}
@@ -137,7 +137,7 @@ The decoder is composed of a stack of $N=6$ identical layers. The decoder insert
 \subsection{Attention}
 An attention function consists in mapping a query and a set of key-value pairs to an output, where the query, keys, values and output are all vectors. The output is computed as a weighted sum of the values, with weights computed by a compatibility function of the query with the corresponding key.
 \subsubsection{Scaled dot-product attention} 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/transformer/scaled_dot_product_attention.png}
     \caption{Scaled dot-product attention}
@@ -152,7 +152,7 @@ The attention function is computed using Q, K and V matrices, producing an outpu
 \end{center}
 Scaled dot-product attention is both faster and more space efficient of two commonly used attention functions: additive attention and dot-product (multiplicative) attention. These performances reachable because of the highly optimized implementation of matrix multiplication code.
 \subsubsection{Multi-head attention}
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.25]{images/transformer/multi-headed_attention.jpeg}
     \caption{Multi-head attention}

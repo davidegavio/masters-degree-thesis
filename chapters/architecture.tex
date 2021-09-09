@@ -60,9 +60,9 @@ Every service executed is a transaction, if there is an error in the execution t
 In the implemented framework there are two main categories of services:
 \begin{itemize}
     \item \textbf{Preprocessing services}: preprocessing services are services that prepare the dataset to be used. Those services cover the corrective operations that are applied on the original dataset: textual data is cleaned from special characters, documents are adapted in order to be used further on, documents are filtered given a condition, \dots  \\
-    In this category there are two services: \textit{cleaning} and \textit{filtering} services.
+    In this category there are two services: \emph{cleaning} and \emph{filtering} services.
     \item \textbf{Processing services}: processing services are services that constitutes the core of the framework: in those services, data is processed in order to produce usable embedding representation in order to perform a scoring algorithm to fulfill a semantic similarity search task. \\
-    In this category there are three services: \textit{embedding extraction}, \textit{numerosity reduction} and \textit{scoring} services.
+    In this category there are three services: \emph{embedding extraction}, \emph{numerosity reduction} and \emph{scoring} services.
 \end{itemize}
 
 \subsection{DAG}

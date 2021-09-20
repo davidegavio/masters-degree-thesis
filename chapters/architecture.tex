@@ -38,17 +38,34 @@
 \begin{document}
 \chapter{Architecture}
 
+\section{Software architecture}
+A \emph{software architecture} is a set of architectural elements that have a particular form \cite{Perry1992FoundationsFT}. There are three different classes of architectural elements: 
+\begin{itemize}
+    \item \textbf{Processing elements}: supply the transformation on data elements;
+    \item \textbf{Data elements}: elements that contain the information that is used and transformed;
+    \item \textbf{Connecting elements}: are the elements that connect different architectural elements together.
+\end{itemize}
+The architectural form consists of weighted properties and relationship, where the weight indicates either the importance of the property/relationship, or the necessity to select among alternatives, some of which may be preferred over others. The so called \emph{Architect} is able to distinguish between important and decorative formal aspects using properties and relationships weights.
 \section{Service-Oriented Architecture}
-SOA, or service-oriented architecture, defines a way to make software components reusable and interoperable via service interfaces. Services use common interface standards and an architectural pattern so they can be rapidly incorporated into new applications. The service interfaces provide loose coupling, meaning they can be called with little or no knowledge of how the service is implemented underneath, reducing the dependencies between applications. 
-\cite{SOA_ibm}
-
-\section{Microservices}
-Microservices (or microservices architecture) are a cloud native architectural approach in which a single application is composed of many loosely coupled and independently deployable smaller components, or services. 
-\cite{microservices_ibm}
+Service-Oriented Architecture (SOA) is an architectural style that supports service-orientation. Service-orientation is a way of thinking in terms of services and service-based development and the outcomes of services \cite{soa_definition}. The SOA architectural style has the following distinctive features:
+\begin{itemize}
+    \item It is based on the design of the services – which mirror real-world business activities – comprising the enterprise (or inter-enterprise) business processes;
+    \item Service representation implements services using service orchestration;
+    \item It places unique requirements on the infrastructure;
+    \item Implementations are environment-specific;
+    \item It requires strong governance of service representation and implementation.
+\end{itemize}
+A service:
+\begin{itemize}
+    \item Is a logical representation of a repeatable business activity that has a specified outcome (e.g., check customer credit, provide weather data, consolidate drilling reports);
+    \item Is self-contained;
+    \item May be composed of other services;
+    \item Is a “black box” to consumers of the service.
+\end{itemize}
 
 \section{Project architecture}
-The implemented architecture follows the idea of SOA or Microservices, with some differences. It's based on a series of services that read the input from data lake and writes the result on the data lake. The final result is a pipeline of services, executed one after the other.
-\begin{figure}[h]
+The implemented architecture follows the idea of SOA. It's based on a series of services that read the input from data lake and writes the result on the data lake. The final result is a pipeline of services, executed one after the other.
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.75]{images/architecture/architecture_service_example.png}
     \caption{Architecture example}
@@ -59,7 +76,7 @@ Every service executed is a transaction, if there is an error in the execution t
 \subsection{Categories of services}
 In the implemented framework there are two main categories of services:
 \begin{itemize}
-    \item \textbf{Preprocessing services}: preprocessing services are services that prepare the dataset to be used. Those services cover the corrective operations that are applied on the original dataset: textual data is cleaned from special characters, documents are adapted in order to be used further on, documents are filtered given a condition, \dots  \\
+    \item \textbf{Preprocessing services}: preprocessing services are services that prepare the dataset to be used. Those services cover the corrective operations that are applied on the original dataset: textual data is cleaned from special characters, documents are adapted in order to be used further on, documents are filtered given a condition, and so on.  \\
     In this category there are two services: \emph{cleaning} and \emph{filtering} services.
     \item \textbf{Processing services}: processing services are services that constitutes the core of the framework: in those services, data is processed in order to produce usable embedding representation in order to perform a scoring algorithm to fulfill a semantic similarity search task. \\
     In this category there are three services: \emph{embedding extraction}, \emph{numerosity reduction} and \emph{scoring} services.
@@ -75,7 +92,7 @@ Once defined the services that need to be executed, these make up a so called Di
 \end{figure}
 As visible in Figure \ref{fig:dag_example}, the two phases are subsequent and linked. If anything breaks the pipeline, the dataset will be updated to the last written result, allowing to restart from that checkpoint and not recomputing from the beginning, saving up precious machine-time.
 \subsection{Orchestrator}
-An orchestrator is a module of a framework which has the task of managing the execution of other modules in order to guarantee the right pipeline execution. The orchestrator reads a series of messages that parametrize different services, than executes the associated services passing read messages as service input. Every message is a correctly formatted JSON object which contains all values that are necessary. An example of parameter message is visible below:
+An orchestrator is a module of a framework which has the task of managing the execution of other modules in order to guarantee the right pipeline execution. The orchestrator reads a series of messages that parametrize different services, than executes the associated services passing read messages as service input. Every message is a correctly formatted JSON object which contains all values that are necessary. An example of parameter message is visible in Listing 3.1:
 \\
 \begin{center}
     \begin{lstlisting}[language=json, caption="Parameter message example", captionpos=b]
@@ -94,8 +111,8 @@ An orchestrator is a module of a framework which has the task of managing the ex
     \end{lstlisting}
 \end{center}
 
-Each one of the above parameters and hyperparameters are passed to the associated service in order to instantiate different variables that will drive the service execution.
-The pseudocode for the orchestrator is visible below:
+Each of the above parameters and hyperparameters are passed to the associated service in order to instantiate different variables that will drive the service execution.
+The pseudocode for the orchestrator is shown in Algorithm 1:
 \begin{center}
     \begin{algorithm}[H]
      \KwData{List of JSON messages}

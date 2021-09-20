@@ -1,8 +1,8 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{oist}
-\LoadClass[12pt,twoside]{report}
+\LoadClass[12pt, twoside]{report}
 
-\RequirePackage[a4paper, headheight=0.6cm, inner=3cm ,outer=2.5cm, top=2cm, bottom=2cm]{geometry}  % Changing size of document
+\RequirePackage[a4paper]{geometry}  % Changing size of document
 \RequirePackage{silence}
 \WarningFilter{auxhook}{Cannot patch}
 \RequirePackage[table]{xcolor}

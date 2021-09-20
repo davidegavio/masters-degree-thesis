@@ -38,14 +38,14 @@
 \begin{document}
 \chapter{Methods}
 \label{methods}
-In this chapter there will be an explanation of what every single service does. Due to legal reasons in this manuscript there won't be any code or dataset example. Each service component will be explained through a pseudocode representation in order to make the whole system more understandable.\\
+In this chapter there is an explanation of what every single service does. Due to legal reasons in this manuscript there won't be any code or dataset example. Each service component will be explained through a pseudocode representation in order to make the whole system more understandable.\\
 All services are Jupyter notebooks that exploit the parallelization ability of PySpark, working on several rows at the same time using Map-Reduce approach which is the go to solution in big data field.
 \section{Preprocessing}
 As said in \emph{Architecture} chapter, this is the phase where the dataset is elaborated in order to be used further on. 
 \subsection{Cleaning}
 Given a textual dataset, cleaning service performs all the operations needed to have cleaned and well formed documents.
 \subsubsection{HTML cleaning}
-The first (parametrized) step is to remove all HTML special characters. This operation is preparatory for next phases that need to deal with human-readable texts.
+The first (parametrized) step is to remove all HTML special characters. This operation is preparatory for next phases that need to deal with human-readable texts. The pseudocode of HTML removal phase is visible in Algorithm 2.
 \begin{center}
     \begin{algorithm}[H]
      \KwData{Textual dataset}
@@ -61,7 +61,7 @@ The first (parametrized) step is to remove all HTML special characters. This ope
 \end{center}
 This service is based on Python HTML class \cite{html_parser}, which allows to parse textual files filled with HTML special characters and tags.
 \subsubsection{Sentence splitting}
-This is the first step to overcome transformer technology limitations: in order to not increase to much memory usage, transformers libraries set a maximum of tokens that the model is able to manage. Therefore, long texts are difficult to manage as a whole, so they need to be divided in sentences (splits).
+This is the first step to overcome transformer technology limitations: in order to not increase to much memory usage, transformers libraries set a maximum of tokens that the model is able to manage. Therefore, long texts are difficult to manage as a whole, so they need to be divided in sentences (splits). In Algorithm 3 is visible the pseudocode for splitting phase.
 \begin{center}
     \begin{algorithm}[H]
      \KwData{Cleaned dataset}
@@ -75,7 +75,7 @@ This is the first step to overcome transformer technology limitations: in order 
     \end{algorithm}
 \end{center}
 \subsubsection{Split cleaning}
-In order to obtain the best vectorial representation using transformers, splits need to be cleaned from all punctuation and special characters that are not truly useful. Those characters could be present in text due to human errors, OCR errors or even errors in format-to-format conversion.
+In order to obtain the best vectorial representation using transformers, splits need to be cleaned from all punctuation and special characters that are not truly useful. Those characters could be present in text due to human errors, OCR errors or even errors in format-to-format conversion. In Algorithm 4 is visible the pseudocode for split cleaning operation.
 \begin{center}
     \begin{algorithm}[H]
      \KwData{Splitted dataset}
@@ -98,7 +98,7 @@ In order to obtain the best vectorial representation using transformers, splits 
     \end{algorithm}
 \end{center}
 \subsubsection{Split filtering}
-The final step of cleaning service is split filtering. In this phase, splits that do not satisfy certain conditions are filtered out in order to keep only correct splits.
+The final step of cleaning service is split filtering. In this phase, splits that do not satisfy certain conditions are filtered out in order to keep only correct splits. In Algorithm 4 are visible the conditions on the basis on which a split is removed or not. 
 \begin{center}
     \begin{algorithm}[H]
      \KwData{Cleaned dataset}
@@ -118,7 +118,7 @@ The final step of cleaning service is split filtering. In this phase, splits tha
 \end{center}
 
 \subsection{Filtering}
-In some applications, it is needed to reduce the number of records inside a dataset. In the implemented framework this is performed using the filtering service. Reading a list of keys which has to be kept, this service is able to filter out those keys that aren't part of the list mentioned earlier.
+In some applications, it is needed to reduce the number of records inside a dataset. In the implemented framework this is performed using the filtering service. Reading a list of keys which has to be kept, this service is able to filter out those keys that aren't part of the list mentioned earlier. Algorithms 6 shows how two datasets are joined in order to filter the bigger one.
 \begin{center}
     \begin{algorithm}[H]
      \KwData{Cleaned dataset}
@@ -152,12 +152,12 @@ MPNET has been released by Microsoft in 2020. As visible from their blog post \c
 DistilBERT has been released by HuggingFace engineers in 2019. They focused on the problem of growing model size and how to put in production such models. From their blog post \cite{distilbert_blog_post}, they used the \emph{distillation} technique to compress a large model into a smaller model.\\
 \textbf{Distillation}: Knowledge distillation (sometimes also referred to as teacher-student learning) is a compression technique in which a small model is trained to reproduce the behavior of a larger model (or an ensemble of models). It was introduced by Bucila et al.\cite{10.1145/1150402.1150464} and generalized by Hinton et al.\cite{hinton2015distilling} a few years later\cite{DBLP:journals/corr/abs-1910-01108}.
 \paragraph{XLM}
-XLM transformer has been released by Facebook, in 2019. As visible by their blog post \cite{xlm_blog_post}, researchers at Facebook developed this transformer model to extend the pretraining for English language to other languages. XLM uses a known pre-processing technique (BPE) and a dual-language training mechanism with BERT in order to learn relations between words in different languages. First, instead of using word or characters as the input of the model, it uses Byte-Pair Encoding (BPE) that splits the input into the most common sub-words across all languages, thereby increasing the shared vocabulary between languages. Furthermore, it extends BERT architecture in two ways:
+XLM transformer has been released by Facebook, in 2019 \cite{DBLP:journals/corr/abs-1901-07291}. As visible by their blog post \cite{xlm_blog_post}, researchers at Facebook developed this transformer model to extend the pretraining for English language to other languages. XLM uses a known pre-processing technique (BPE) and a dual-language training mechanism with BERT in order to learn relations between words in different languages. First, instead of using word or characters as the input of the model, it uses Byte-Pair Encoding (BPE) that splits the input into the most common sub-words across all languages, thereby increasing the shared vocabulary between languages. Furthermore, it extends BERT architecture in two ways:
 \begin{itemize}
     \item Each training sample consists of the same text in two languages, whereas in BERT each sample is built from a single language. As in BERT, the goal of the model is to predict the masked tokens, however, with the new architecture, the model can use the context from one language to predict tokens in the other, as different words are masked words in each language (they are chosen randomly).
     \item The model also receives the language ID and the order of the tokens in each language, i.e. the Positional Encoding, separately. The new metadata helps the model learn the relationship between related tokens in different languages.
 \end{itemize}
-\cite{DBLP:journals/corr/abs-1901-07291}
+
 
 SentenceTransformers abstracts all the tokenization and averaging logics: given a sentence, it is tokenized, for each token it is extracted a n-dimensional vector (e.g. 768) and finally those vectors are averaged in order to obtain a single n-dimensional vector. To overcome the problem of transformer model longest manageable sequence, the service performs a tokenization, using the model tokenizer, in order to check if the input sentence is manageable by the chosen model. If it's longer, the sentence is splitted in order to perform the extraction without any problem. The pseudocode is visible below:
 \begin{center}
@@ -182,20 +182,20 @@ SentenceTransformers abstracts all the tokenization and averaging logics: given 
 \subsection{Numerosity reduction}
 Working with long documents ends up in having very long sets of vectors: their dimension remains the same because every extraction is performed with the same model, but their numerosity may vary: a document with 10 sentences has 10 different vectors, and so on. Depending on the model used, these vectors may increase the memory size of the document in a consistent way. A mechanism of vector numerosity reduction: in this way it's possible to reduce the memory consumption sacrificing some informative content. The implemented algorithm inside the framework is a service that exploits cosine similarity in order to reduce the vector number: after computing the internal similarity of the cartesian product of all sentences inside a document, the minimum spanning tree is extracted. Every sentence is considered a node in a fully connected graph and the minimum spanning tree defines the path to follow in order to find highly similar sentences: if two sentences are similar over a given threshold, the two vectors are merged reducing the numerosity. \\
 \textbf{Graph}:
-A graph is a diagram of vertices or nodes connected by edges.
+A graph is a diagram of vertices or nodes connected by edges and is visible in Figure \ref{fig:graph_example}.
 \begin{center}
-    \begin{figure}[h]
+    \begin{figure}[H]
     \centering
     \includegraphics[scale=1]{images/methods/graph_example.png}
     \caption{Graph example}
     \label{fig:graph_example}
 \end{figure}
 \end{center}
-Black dots constitutes the set of nodes while the lines constitute the set of edges. Edges may have a value called weight. \cite{Siu1998IntroductionTG}\\
+Numbered white circles constitute the set of nodes while the lines constitute the set of edges. Edges may have a value called weight \cite{Siu1998IntroductionTG}. \\
 \textbf{Fully connected graph}:
-A fully connected graph is a graph in which every node is connected to all other nodes. \cite{Siu1998IntroductionTG}
+A fully connected graph is a graph in which every node is connected to all other nodes \cite{Siu1998IntroductionTG} and is visible in Figure \ref{fig:fully_connected_graph_example}. 
 \begin{center}
-    \begin{figure}[h]
+    \begin{figure}[H]
     \centering
     \includegraphics[scale=1]{images/methods/fully_connected_graph_example.png}
     \caption{Fully connected graph example}
@@ -203,30 +203,68 @@ A fully connected graph is a graph in which every node is connected to all other
 \end{figure}
 \end{center}
 \textbf{Matrix representation}: 
-Given a graph G with vertices labelled {1, 2, ...,$n$}, its \emph{adjacency matrix} A is a $n \times m$ matrix whose $ij$-th entry is the number of edges joining vertex i and vertex j. If, in addition, the edges are labelled {1, 2,... , $m$}, its \emph{incidence matrix} M is the $n \times m$ matrix whose $ij$-th entry is 1 if vertex $i$ is incident to edge $j$, and 0 otherwise. If the edges have a weight, its \emph{weight matrix} W is the $n \times m$ matrix whose $ij$-th entry is the weight of the edge connecting vertex $i$ and vertex $j$.
-\begin{align}
-A &= \begin{bmatrix}
-    0 & 3 & 3 & 3\\
-    3 & 0 & 3 & 3\\
-    3 & 3 & 0 & 3\\
-    3 & 3 & 3 & 0
-\end{bmatrix}
-&
-M &= \begin{bmatrix}
-    0 & 1 & 1 & 1\\
-    1 & 0 & 1 & 1\\
-    1 & 1 & 0 & 1\\
-    1 & 1 & 1 & 0
-\end{bmatrix}
-&
-W &= \begin{bmatrix}
-    0 & 0.20 & 0.60 & 0.40\\
-    0.20 & 0 & 0.25 & 0.35\\
-    0.60 & 0.25 & 0 & 0.15\\
-    0.40 & 0.35 & 0.15 & 0
-\end{bmatrix}
-\end{align}
-\textbf{Minimum spanning tree}: An edge-weighted graph is a graph where we associate weights or costs with each edge. A minimum spanning tree (MST) of an edge-weighted graph is a spanning tree whose weight (the sum of the weights of its edges) is no larger than the weight of any other spanning tree.
+Given a graph G with vertices labelled {1, 2, ..., $n$}, its \emph{adjacency matrix} A, visible in Figure \ref{adjacency_matrix_graph}, is a $n \times m$ matrix whose $ij$-th entry is the number of edges joining vertex i and vertex j. If, in addition, the edges are labelled {1, 2,... , $m$}, its \emph{incidence matrix} M, visible in Figure \ref{incidence_matrix_graph}, is the $n \times m$ matrix whose $ij$-th entry is 1 if vertex $i$ is incident to edge $j$, and 0 otherwise. If the edges have a weight, its \emph{weight matrix} W, visible in Figure \ref{weight_matrix_graph}, is the $n \times m$ matrix whose $ij$-th entry is the weight of the edge connecting vertex $i$ and vertex $j$.
+\begin{figure}[H]
+\centering
+    \begin{tabular}{c c}
+        {$\displaystyle
+            A = 
+            {\renewcommand{\arraystretch}{1.2}
+            \begin{bmatrix}
+                0 & 1 & 0 & 1\\
+                1 & 0 & 1 & 2\\
+                0 & 1 & 0 & 1\\
+                1 & 2 & 1 & 0
+            \end{bmatrix}}
+        $}
+        &
+        $\vcenter{\hbox{\includegraphics[scale=0.65]{images/methods/fully_connected_graph_adjacency.png}}}$
+    \end{tabular}
+    \caption{Graph corresponding to adjacency matrix A}
+    \label{adjacency_matrix_graph}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+    \begin{tabular}{c c}
+        {$\displaystyle
+            M = 
+            {\renewcommand{\arraystretch}{1.2}
+            \begin{bmatrix}
+                0 & 1 & 1 & 1\\
+                1 & 0 & 1 & 1\\
+                1 & 1 & 0 & 1\\
+                1 & 1 & 1 & 0
+            \end{bmatrix}}
+        $}
+        &
+        $\vcenter{\hbox{\includegraphics[scale=0.65]{images/methods/fully_connected_graph_example.png}}}$
+    \end{tabular}
+    \caption{Graph corresponding to incidence matrix M}
+    \label{incidence_matrix_graph}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+    \begin{tabular}{c c}
+        {$\displaystyle
+            M = 
+            {\renewcommand{\arraystretch}{}
+            \begin{bmatrix}
+                0 & 0.20 & 0.60 & 0.40\\
+                0.20 & 0 & 0.25 & 0.35\\
+                0.60 & 0.25 & 0 & 0.15\\
+                0.40 & 0.35 & 0.15 & 0
+            \end{bmatrix}}
+        $}
+        &
+        $\vcenter{\hbox{\includegraphics[scale=0.65]{images/methods/fully_connected_graph_weighted.png}}}$
+    \end{tabular}
+    \caption{Graph corresponding to weight matrix W}
+    \label{weight_matrix_graph}
+\end{figure}
+
+\textbf{Minimum spanning tree}: An edge-weighted graph is a graph where we associate weights or costs with each edge. A minimum spanning tree (MST) \cite{books/daglib/0029345} of an edge-weighted graph is a spanning tree whose weight (the sum of the weights of its edges) is no larger than the weight of any other spanning tree. The pseudocode for numerosity reduction algorithm is visible in Algorithm 8.
 \begin{center}
     \begin{figure}[h]
     \centering
@@ -235,7 +273,6 @@ W &= \begin{bmatrix}
     \label{fig:mst_example}
 \end{figure}
 \end{center}
-\cite{books/daglib/0029345}\\
 \subsubsection{Graph numerosity reduction pseudocode}
 \begin{center}
     \begin{algorithm}[H]
@@ -294,7 +331,7 @@ The pseudocode is visible below:
 \section{Evaluation}
 After computing all necessary scores, in order to understand if the hyperparameters configuration works well it's mandatory to define an evaluation method. The evaluation method is mandatory in order to have a reliable set of hyperparameters. \\
 \subsection{Baseline dataset}
-In order to perform an evaluation the definition of a baseline dataset is mandatory. The baseline dataset used throughout the project is constituted by 10 query document and each one has associated 10 search documents: of these 10 documents, 5 are adherent to the query and 5 are not adherent.
+In order to perform an evaluation the definition of a baseline dataset is mandatory. The baseline dataset used throughout the project is constituted by 10 query documents and each one has associated 10 search documents: of these 10 documents, 5 are adherent to the query and 5 are not adherent.
 \subsection{Evaluation method}
 To understand if the framework is working well, it has been decided to focus on two main aspects:
 \begin{itemize}

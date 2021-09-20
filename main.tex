@@ -2,6 +2,8 @@
 \usepackage{biblatex, todonotes, wrapfig}
 \usepackage[ruled,vlined]{algorithm2e}
 \usepackage{listings, xcolor, amsthm, amsmath}
+\usepackage[table]{xcolor}
+
 
 \begin{document}
 \normalsize
@@ -12,7 +14,6 @@
 
 \tableofcontents
 \addcontentsline{toc}{chapter}{Table of Contents}
-\listoftodos
 
 \subfile{\main/chapters/state_of_the_art}
 \subfile{\main/chapters/Technologies}
@@ -21,11 +22,7 @@
 \subfile{\main/chapters/Experiments}
 \subfile{\main/chapters/Conclusions}
 
-\appendix
-% \subfile{\main/chapters/appendix.tex}
-
 \printbibliography
 \addcontentsline{toc}{part}{Bibliography}
-\todo[inline]{split bibliography in code documentation and references}
 
 \end{document}

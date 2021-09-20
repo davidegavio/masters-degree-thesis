@@ -6,19 +6,19 @@
 \section*{Project overview}
 The project presented in this document has been realized at artea.com \cite{artea}, which is a consulting tech company that delivers business-to-business AI solutions. \\
 The idea behind the project was to investigate the possibility of exploiting Transformer-generated embeddings in order to use them in a semantic context. During the years have been proposed several approaches to represent and compare textual documents, but with the introduction of transformer technology with BERT as a forerunner, the ability of better representing documents with vectorized embeddings has made a big leap. Those embeddings try to mimic the human ability to understand the context and the relations of different parts of a written text. In NLP field embeddings are used for several tasks: document similarity, sentiment analysis, document categorization, text summarization, but one of the main challenges is ranking documents given a query: this high level problem is reducible to the similarity between single documents task. This is the same idea that lays behind search engines: once a user inputs a query it is compared to online resources in order to return a list of pertinent results. \\
-Following this idea led to the realization of a  Proof of Concept (PoC) that consists of a ``Semantic Search Engine'' able to semantically rank documents given a query at search time. This approach is strongly based on Transformer technology, which gives a semantic dimension to the project instead of a statistical dimension based on TF/IDF or similar techniques. \\
+Following this idea led to the realization of a Proof of Concept (PoC) that consists of a ``Semantic Search Engine'' able to semantically rank documents given a query at search time. This approach is strongly based on Transformer technology, which gives a semantic dimension to the project instead of a statistical dimension based on TF/IDF or similar techniques. \\
 The deliverable consists of a distributable framework able to agnostically manage the entire workflow, from data cleaning to document ranking, providing a series of metrics to evaluate performances. \\
 In this project, it has been demonstrated that is possible to exploit transformer-produced representation of a given document corpus and use them to perform a semantic search for a given query.
 
 \section*{Manuscript organization}
-This thesis document is organized in different chapters that cover all project aspects, from a theoretical point of view, to an experimental point of view.
+This document is organized in different chapters that cover all project aspects, from a theoretical point of view, to an experimental point of view.
 The chapters are divided in the following way:
-\begin{itemize}
-    \item \textbf{1 - State of the art}: this chapter covers the state of the art for the project subject with bibliographic references
-    \item \textbf{2 - Technologies}: this chapter covers the theoretical aspect of used technologies
-    \item \textbf{3 - Architecture}: this chapter describes the system architecture which has been implemented during the project period
-    \item \textbf{4 - Methods}: this chapter focuses on the analysis on the methods applied in order to obtain final results
-    \item \textbf{5 - Experiments}: this chapter contains a selection of experiments that have been completed during the project, in order to demonstrate the goodness of the work
-    \item \textbf{6 - Conclusions}: this chapter sums up all the work, focusing on what has been done and on what is still needed to complete exhaustively the project
-\end{itemize}
+\begin{enumerate}
+    \item \textbf{State of the art}: this chapter covers the state of the art for the project subject with bibliographic references;
+    \item \textbf{Technologies}: this chapter covers the theoretical aspect of used technologies;
+    \item \textbf{Architecture}: this chapter describes the system architecture which has been implemented during the project period;
+    \item \textbf{Methods}: this chapter focuses on the analysis on the methods applied in order to obtain final results;
+    \item \textbf{Experiments}: this chapter contains a selection of experiments that have been completed during the project, in order to demonstrate the goodness of the work;
+    \item \textbf{Conclusions}: this chapter sums up all the work, focusing on what has been done and on what is still needed to complete exhaustively the project.
+\end{enumerate}
 \end{document}

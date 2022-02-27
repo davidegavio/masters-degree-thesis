@@ -20,23 +20,23 @@ Big data \cite{Gandomi2015BeyondTH} is high-volume, high-velocity and/or high-va
 \end{itemize}
 Other mentioned dimensions that are not part of the ``core'' definition:
 \begin{itemize}
-    \item \textbf{Veracity}: the unreliability of some data sources. For example, social media sentiments are a uncertain data source, because they imply human judgement
-    \item \textbf{Variability}: the variation in data flow rates. Data could be produced by sources at not constant rates
-    \item \textbf{Complexity}: the heterogeneity of data sources. Being generated through a myriad of sources, big data must be cleaned and connected in order to be used
-    \item \textbf{Value}: the importance of big data. Being characterized by a ``low value density'', a big quantity must be analyzed in order to obtain an high value and be remunerative
+    \item \textbf{Veracity}: the unreliability of some data sources. For example, social media sentiments are a uncertain data source, because they imply human judgement;
+    \item \textbf{Variability}: the variation in data flow rates. Data could be produced by sources at not constant rates;
+    \item \textbf{Complexity}: the heterogeneity of data sources. Being generated through a myriad of sources, big data must be cleaned and connected in order to be used;
+    \item \textbf{Value}: the importance of big data. Being characterized by a ``low value density'', a big quantity must be analyzed in order to obtain an high value and be remunerative.
 \end{itemize}
 \subsection{Distributed file system}
 To exploit cluster computing, data must be organized differently from the conventional file systems of single computers. This new organization is called Distributed file system (DFS) and is used as follows:
 \begin{itemize}
-    \item Files can be huge, possibly terabyte in size
-    \item Files are rarely updated. They are read as input for calculation and possibly additional data is appended to files
+    \item Files can be huge, possibly terabyte in size;
+    \item Files are rarely updated. They are read as input for calculation and possibly additional data is appended to files.
 \end{itemize}
 Files are divided into chunks. Chunks are replicated on different computer nodes. If chunks are replicated on different racks, like in Figure \ref{fig:racks_dfs}, a rack failure won't cause any data loss.
 Examples of DFS are:
 \begin{itemize}
-    \item Google File System (GFS) \cite{GhemawatSanjay2003TheGF}, the first of the class
-    \item Hadoop Distributed File System (HDFS) \cite{Shvachko2010TheHD}, an open-source DFS used with Hadoop
-    \item Colossus \cite{10.1145/2491245}, an improved version of GFS
+    \item Google File System (\emph{GFS}) \cite{GhemawatSanjay2003TheGF}, the first of the class;
+    \item Hadoop Distributed File System (\emph{HDFS}) \cite{Shvachko2010TheHD}, an open-source DFS used with Hadoop;
+    \item Colossus \cite{10.1145/2491245}, an improved version of GFS.
 \end{itemize}
 \paragraph{Architecture} HDFS relies on a \emph{master-slave} architecture composed by a master server, the \emph{NameNode}, and from several slave server, the \emph{DataNodes}, generally one per node in the cluster. The NameNode manages the file system namespace and regulates access to files by clients. Each DataNode manages storage attached to the nodes that they run on. In Figure \ref{fig:hdfs_architecture}, is visible a simple schema of HDFS architecture.
 \begin{figure}[H]
@@ -186,13 +186,13 @@ Since the model contains neither recurrence nor convolution, relative or absolut
 
 \subsection{Self-attention motivations}
 In order to understand why self-attention layers are used, it's necessary to compare them with recurrent and convolutional layers. There are three aspects that are important to consider: the total computation complexity per layer, the amount of computation that can be parallelized (intended as the minimum number of sequential operations required) and the path length between long-range dependencies in the network. \\
-In terms of computation that can be parallelized, a self-attention layer connects all positions with a constant number of sequentially executed operations, whereas a recurrent layer requires $O(n)$ sequential operations. In terms of computational complexity, self-attention layers are faster than recurrent layers when the sequence length n is smaller than the representation dimensionality d, which is most often the case with sentence representations used by state of the art models in machine translations, such as word-piece and byte-pair representations.Table \ref{table:complexity_self_attention}, shows the complexity comparison between self attention, recurrence and convolutions from the point of view of maximum path lengths, per-layer complexity and minimum number of sequential operations for different layer types. 
+In terms of computation that can be parallelized, a self-attention layer connects all positions with a constant number of sequentially executed operations, whereas a recurrent layer requires $O(n)$ sequential operations. In terms of computational complexity, self-attention layers are faster than recurrent layers when the sequence length $n$ is smaller than the representation dimensionality $d$, which is most often the case with sentence representations used by state of the art models in machine translations, such as word-piece and byte-pair representations. Table \ref{table:complexity_self_attention}, shows the complexity comparison between self attention, recurrence and convolutions from the point of view of maximum path lengths, per-layer complexity and minimum number of sequential operations for different layer types. 
 
 \begin{table}[H]
 \centering
 \begin{tabular}{||c c c c||} 
  \hline
- Layer type & Complexity per layer & Sequential operations & Maximum path length \\ [0.5ex] 
+ Layer type & Comp. per layer & Seq. ops & Max path length \\ [0.5ex] 
  \hline\hline
  Self attention & $O(n^2 \cdot d)$ & $O(1)$ & $O(1)$ \\ 
  \hline

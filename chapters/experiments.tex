@@ -160,14 +160,16 @@ Table \ref{tab:experimental_results_complete} gathers the whole set of experimen
 \paragraph{Table legend}
 \begin{itemize}
     \item \textbf{Model name} (Model): a label given starting from the original model name
-    \item \textbf{Precision@100} (P@100): as previously mentioned in \emph{Methods} chapter, this metric measures the percentage of right positioned documents in relation to the input query
-    \item \textbf{Difference mean} (Diff mean): as previously mentioned in \emph{Methods} chapter, this is the difference between the mean of correlated documents and not-correlated documents. The higher the result, the higher the framework ability to recognize right documents from wrong
-    \item \textbf{Difference median} (Diff median): as previously mentioned in \emph{Methods} chapter, this is the difference between the median of correlated documents and not-correlated documents. The higher the result, the higher the framework ability to recognize right documents from wrong
-    \item \textbf{Multilingual} (Multilang): if the model is multilingual or not
-    \item \textbf{Reduction ratio} (Red ratio \%): the percentage of vectors removed
-    \item \textbf{Voting technique} (Voting tech): the operation that aggregates the best results from voting, mean or median
-    \item \textbf{Reduction percentage} (Red \%): every model produces a different range of similarity values when it come to reduce the numerosity. In order to compute and to compare the results, the reduction portion is calculated as the percentage of the range of values
+    \item \textbf{Precision@100} (P@100): as previously mentioned in \emph{Methods} chapter, this metric measures the percentage of right positioned documents in relation to the input query;
+    \item \textbf{Difference mean} (Diff mean): as previously mentioned in \emph{Methods} chapter, this is the difference between the mean of correlated documents and not-correlated documents. The higher the result, the higher the framework ability to recognize right documents from wrong;
+    \item \textbf{Difference median} (Diff median): as previously mentioned in \emph{Methods} chapter, this is the difference between the median of correlated documents and not-correlated documents. The higher the result, the higher the framework ability to recognize right documents from wrong;
+    \item \textbf{Multilingual} (Multilang): if the model is multilingual or not;
+    \item \textbf{Reduction ratio} (Red ratio \%): the percentage of vectors removed;
+    \item \textbf{Voting technique} (Voting tech): the operation that aggregates the best results from voting, mean or median;
+    \item \textbf{Reduction percentage} (Red \%): every model produces a different range of similarity values when it come to reduce the numerosity. In order to compute and to compare the results, the reduction portion is calculated as the percentage of the range of values.
 \end{itemize}
+
+\newpage
 
 \begin{table}
 \centering
@@ -206,28 +208,6 @@ Xlm    & 0,8  & 0,1   & 0,1   & true  & 1,69  & mean   & 0,5 \\
 Xlm    & 0,8  & 0,11  & 0,11  & true  & 0     & mean   & 0   \\
 Albert                    & 0,74 & 0,02  & 0,02  & false & 0     & median & 0   \\
 Distilbert & 0,74 & 0,04  & 0,05  & true  & 0     & median & 0   \\
-Albert                    & 0,72 & 0,02  & 0,02  & false & 0     & mean   & 0   \\
-Distilbert & 0,72 & 0,04  & 0,04  & true  & 0     & mean   & 0   \\
-Distilbert & 0,68 & 0,02  & 0,02  & true  & 79,73 & median & 0,1 \\
-Distilbert & 0,64 & 0,01  & 0,03  & true  & 93,75 & mean   & 0,4 \\
-Distilbert & 0,64 & 0,01  & 0,03  & true  & 96,52 & median & 0,4 \\
-Distilbert & 0,62 & 0,01  & 0,02  & true  & 67,21 & mean   & 0,1 \\
-Distilbert & 0,58 & 0     & 0,03  & true  & 97,47 & median & 0,5 \\
-Distilbert & 0,58 & 0     & 0,03  & true  & 97,22 & mean   & 0,5 \\
-Albert                    & 0,54 & -0,01 & 0,02  & false & 96,67 & mean   & 0,1 \\
-Albert                    & 0,54 & -0,01 & 0,02  & false & 96,15 & median & 0,1 \\
-Distilbert & 0,54 & 0,01  & 0     & true  & 84,48 & mean   & 0,2 \\
-Distilbert & 0,5  & 0     & 0     & true  & 87,5  & median & 0,3 \\
-Distilbert & 0,5  & 0,01  & 0     & true  & 71,88 & median & 0,2 \\
-Distilbert & 0,5  & 0     & 0     & true  & 94,74 & mean   & 0,3 \\
-Albert                    & 0,48 & 0     & 0     & false & 96,08 & mean   & 0,5 \\
-Albert                    & 0,48 & 0     & -0,01 & false & 94,44 & mean   & 0,3 \\
-Albert                    & 0,48 & 0     & 0     & false & 95    & median & 0,5 \\
-Albert                    & 0,48 & 0     & -0,01 & false & 94,44 & median & 0,3 \\
-Albert                    & 0,48 & -0,01 & -0,01 & false & 95,56 & mean   & 0,2 \\
-Albert                    & 0,48 & 0     & 0     & false & 96,08 & mean   & 0,4 \\
-Albert                    & 0,48 & -0,01 & -0,01 & false & 97,37 & median & 0,2 \\
-Albert                    & 0,48 & 0     & 0     & false & 96,08 & median & 0,4 \\
 \hline
 \end{tabular}
 }
@@ -242,27 +222,47 @@ Albert                    & 0,48 & 0     & 0     & false & 96,08 & median & 0,4 
 \hline
 Model & P@100 & Diff mean & Diff median & Multilang & Red ratio \% & Voting tech & Red \% \\
 \hline\hline
-\rowcolor{gray} Mpnet             & 0,88 & 0,13  & 0,12  & false & 9,88  & median & 0,4 \\
-Mpnet                 & 0,88 & 0,13  & 0,13  & false & 0     & median & 0,1 \\
-Mpnet                 & 0,88 & 0,13  & 0,13  & false & 0     & median & 0,2 \\
-Mpnet                 & 0,88 & 0,13  & 0,13  & false & 0     & median & 0,3 \\
-Mpnet                 & 0,88 & 0,13  & 0,13  & false & 0     & median & 0   \\
-PAlbert          & 0,86 & 0,1   & 0,11  & false & 0     & median & 0,2 \\
-\rowcolor{gray} PAlbert          & 0,86 & 0,1   & 0,11  & false & 6,52  & median & 0,4 \\
-PAlbert          & 0,86 & 0,1   & 0,11  & false & 0     & median & 0   \\
-Xlm    & 0,86 & 0,12  & 0,1   & true  & 0     & median & 0   \\
-PAlbert          & 0,86 & 0,1   & 0,11  & false & 0,74  & median & 0,3 \\
-PAlbert          & 0,86 & 0,1   & 0,11  & false & 0     & median & 0,1 \\
-\rowcolor{gray} Mpnet                 & 0,86 & 0,12  & 0,12  & false & 11,49 & median & 0,5 \\
-\rowcolor{gray} PAlbert          & 0,84 & 0,1   & 0,1   & false & 2,63  & median & 0,5 \\
-Xlm    & 0,84 & 0,11  & 0,09  & true  & 3,64  & median & 0,5 \\
-Mpnet                 & 0,84 & 0,12  & 0,12  & false & 0     & mean   & 0,2 \\
-Mpnet                 & 0,84 & 0,12  & 0,12  & false & 0     & mean   & 0,1 \\
-\rowcolor{gray} PAlbert          & 0,84 & 0,09  & 0,1   & false & 10,87 & mean   & 0,5 \\
-Mpnet                 & 0,84 & 0,12  & 0,12  & false & 8,62  & mean   & 0,4 \\
-Mpnet                 & 0,84 & 0,12  & 0,12  & false & 6,4   & mean   & 0,3 \\
-\rowcolor{gray} Mpnet                 & 0,84 & 0,12  & 0,12  & false & 15,72 & mean   & 0,5 \\
-Mpnet                 & 0,84 & 0,12  & 0,12  & false & 0     & mean   & 0   \\
+Albert                    & 0,72 & 0,02  & 0,02  & false & 0     & mean   & 0   \\
+Distilbert & 0,72 & 0,04  & 0,04  & true  & 0     & mean   & 0   \\
+Distilbert & 0,68 & 0,02  & 0,02  & true  & 79,73 & median & 0,1 \\
+Distilbert & 0,64 & 0,01  & 0,03  & true  & 93,75 & mean   & 0,4 \\
+Distilbert & 0,64 & 0,01  & 0,03  & true  & 96,52 & median & 0,4 \\
+Distilbert & 0,62 & 0,01  & 0,02  & true  & 67,21 & mean   & 0,1 \\
+Distilbert & 0,58 & 0     & 0,03  & true  & 97,47 & median & 0,5 \\
+Distilbert & 0,58 & 0     & 0,03  & true  & 97,22 & mean   & 0,5 \\
+Albert                    & 0,54 & 0 & 0,02  & false & 96,67 & mean   & 0,1 \\
+Albert                    & 0,54 & 0 & 0,02  & false & 96,15 & median & 0,1 \\
+Distilbert & 0,54 & 0,01  & 0     & true  & 84,48 & mean   & 0,2 \\
+Distilbert & 0,5  & 0     & 0     & true  & 87,5  & median & 0,3 \\
+Distilbert & 0,5  & 0,01  & 0     & true  & 71,88 & median & 0,2 \\
+Distilbert & 0,5  & 0     & 0     & true  & 94,74 & mean   & 0,3 \\
+Albert                    & 0,48 & 0     & 0     & false & 96,08 & mean   & 0,5 \\
+Albert                    & 0,48 & 0     & 0 & false & 94,44 & mean   & 0,3 \\
+Albert                    & 0,48 & 0     & 0     & false & 95    & median & 0,5 \\
+Albert                    & 0,48 & 0     & 0 & false & 94,44 & median & 0,3 \\
+Albert                    & 0,48 & 0 & 0 & false & 95,56 & mean   & 0,2 \\
+Albert                    & 0,48 & 0     & 0     & false & 96,08 & mean   & 0,4 \\
+Albert                    & 0,48 & 0 & 0 & false & 97,37 & median & 0,2 \\
+Albert                    & 0,48 & 0     & 0     & false & 96,08 & median & 0,4 \\
+\hline
+\end{tabular}
+}
+\caption{Continued from previous table}
+\end{table}
+
+\begin{table}
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{||c|c|c|c|c|c|c|c||}
+\hline
+Model & P@100 & Diff mean & Diff median & Multilang & Red ratio \% & Voting tech & Red \% \\
+\hline\hline
+Mpnet             & 0,88 & 0,13  & 0,12  & false & 9,88  & median & 0,4 \\
+PAlbert          & 0,86 & 0,1   & 0,11  & false & 6,52  & median & 0,4 \\
+Mpnet                 & 0,86 & 0,12  & 0,12  & false & 11,49 & median & 0,5 \\
+PAlbert          & 0,84 & 0,1   & 0,1   & false & 2,63  & median & 0,5 \\
+PAlbert          & 0,84 & 0,09  & 0,1   & false & 10,87 & mean   & 0,5 \\
+Mpnet                 & 0,84 & 0,12  & 0,12  & false & 15,72 & mean   & 0,5 \\
 \hline
 \end{tabular}
 }

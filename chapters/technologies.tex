@@ -110,15 +110,22 @@ Reduce operation is an action. Because of this, it returns a value and not anoth
 \subsubsection{Spark implementation}
 Like Hadoop or other MapReduce implementations, Spark manages large RDDs in the same way: it divides it in splits (MapReduces's chunks) and spreads them to different compute nodes in order to allow parallel computation.
 \paragraph{Lazy evaluation}
-The first difference from other MapReduce implementations, is that Spark is lazy evaluated: transformations are not applied on an RDD until it is required to do so, tipically in correspondence of an action.
+The first difference from other MapReduce implementations, is that Spark is lazy evaluated: transformations are not applied on an RDD until it is required to do so, typically in correspondence of an action.
 \paragraph{Resilience of RDDs}
 Performing operations on RDDs, creates a \emph{lineage} of those RDDs, so that in case of failure, Spark is able to recreate the RDD (or just a split) looking at its lineage.
 \newpage
 
 \section{Transformers}
 Until massive adoption of transformer technology, the dominant sequence transduction models were based on complex recurrent or convolutional neural networks that include an encoder and a decoder.
-Transformers are a network architecture based only on attention mechanism, not explicitly exploiting recurrence and convolution, differently from previously adopted system like recurrent neural networks, long short-term memory and gated recurrent neural networks. Transformers are used to draw global dependencies between input and output. They are used to better handle long-range dependencies within a text. These technologies allow to represent texts in a more semantical way, better capturing context and relations among different parts of the text \cite{vaswani2017attention}. Transformers are the true state of the art in NLP field, since 2018 (year of BERT \cite{devlin2018bert}\cite{bert_blog_post} release) transformers are used in different fields that require a semantic representation of texts. Some examples of transformer applications are shortly described here below.
+Transformers are a network architecture based only on attention mechanism, not explicitly exploiting recurrence and convolution, differently from previously adopted system like recurrent neural networks, long short-term memory and gated recurrent neural networks. Transformers are used to draw global dependencies between input and output. They are used to better handle long-range dependencies within a text. These technologies allow to represent texts in a more semantical way, better capturing context and relations among different parts of the text \cite{vaswani2017attention}. Transformers are the true state of the art in NLP field, since 2018 (year of BERT \cite{devlin2018bert}\cite{bert_blog_post} release) transformers are used in different fields that require a semantic representation of texts. Some examples of Transformer implementations are shortly described here below.
+\begin{enumerate}
+    \item \textbf{An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale}: in \cite{Dosovitskiy2021AnII}, researchers have applied Transformers directly on sub-portions of an image in order to obtain a representation that can be furtherly used for image classification tasks. Good results are shown when training happens on small datasets.
+    \item \textbf{Speech-Transformer: A No-Recurrence Sequence-to-Sequence Model for Speech Recognition}: in \cite{Dong2018SpeechTransformerAN}, researchers have presented the Speech-Transformer, a no-recurrence sequence-to-sequence model entirely relies on attention mechanisms to learn the positional dependencies, which can be trained faster with more efficiency. Results based on the Wall Street Journal speech recognition dataset show that the proposed technology achieves an error rate of 10.9\%, while the whole training process only takes 1.2 days on 1 GPU, significantly faster than the published results of recurrent sequence-to-sequence models. 
+\end{enumerate}
+
+\newpage
 \subsection{Architecture}
+Transformers, like most competitive neural sequence transduction, have an encoder-decoder structure with the encoder mapping to an input sequence of symbols $(x_1, \dots, x_n)$ to a continuous representation $z = (z_1, \dots, z_n)$. Given $z$, the decoder generates an output sequence $(y_1, \dots, y_m)$ of symbols one element at a time. In the left and right halves of Figure \ref{fig:transformer_architecture} is shown the fully-connected layers of both encoders and decoders.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.35]{images/transformer/transformer_model_architecture.png}
@@ -126,7 +133,6 @@ Transformers are a network architecture based only on attention mechanism, not e
     \label{fig:transformer_architecture}
 \end{figure}
 
-Transformers, like most competitive neural sequence transduction, have an encoder-decoder structure with the encoder mapping to an input sequence of symbols $(x_1, \dots, x_n)$ to a continuous representation $z = (z_1, \dots, z_n)$. Given $z$, the decoder generates an output sequence $(y_1, \dots, y_m)$ of symbols one element at a time. In the left and right halves of Figure \ref{fig:transformer_architecture} is shown the fully-connected layers of both encoders and decoders.
 \subsection{Encoder}
 The encoder is composed of a stack of $N=6$ identical layers, each one has two sub-layers:
 \begin{itemize}
@@ -141,7 +147,7 @@ The decoder is composed of a stack of $N=6$ identical layers. The decoder insert
 \subsection{Attention}
 An attention function consists in mapping a query and a set of key-value pairs to an output, where the query, keys, values and output are all vectors. The output is computed as a weighted sum of the values, with weights computed by a compatibility function of the query with the corresponding key.
 \subsubsection{Scaled dot-product attention} 
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \includegraphics[scale=0.35]{images/transformer/scaled_dot_product_attention.png}
     \caption{Scaled dot-product attention}

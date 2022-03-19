@@ -39,63 +39,66 @@
 \chapter{Architecture}
 
 \section{Software architecture}
+\todo[inline]{spiegare meglio architettura software}
 A \emph{software architecture} is a set of architectural elements that have a particular form \cite{Perry1992FoundationsFT}. There are three different classes of architectural elements: 
-\begin{itemize}
-    \item \textbf{Processing elements}: supply the transformation on data elements;
+\begin{enumerate}
+    \item \textbf{Processing elements}: elements that supply the transformation on data elements;
     \item \textbf{Data elements}: elements that contain the information that is used and transformed;
-    \item \textbf{Connecting elements}: are the elements that connect different architectural elements together.
-\end{itemize}
-The architectural form consists of weighted properties and relationship, where the weight indicates either the importance of the property/relationship, or the necessity to select among alternatives, some of which may be preferred over others. The so called \emph{Architect} is able to distinguish between important and decorative formal aspects using properties and relationships weights.
+    \item \textbf{Connecting elements}: elements that connect different architectural elements together.
+\end{enumerate}
+The architectural form consists of weighted properties and relationships, where the weight indicates either the importance of the property/relationship, or the necessity to select among alternatives, some of which may be preferred over others. The so called \emph{Architect} is able to distinguish between important and decorative formal aspects using properties and relationships weights.
 \section{Service-Oriented Architecture}
 Service-Oriented Architecture (SOA) is an architectural style that supports service-orientation. Service-orientation is a way of thinking in terms of services and service-based development and the outcomes of services \cite{soa_definition}. The SOA architectural style has the following distinctive features:
-\begin{itemize}
-    \item It is based on the design of the services – which mirror real-world business activities – comprising the enterprise (or inter-enterprise) business processes;
-    \item Service representation implements services using service orchestration;
-    \item It places unique requirements on the infrastructure;
-    \item Implementations are environment-specific;
-    \item It requires strong governance of service representation and implementation.
-\end{itemize}
+\begin{enumerate}
+    \item it is based on the design of the services – which mirror real-world business activities – comprising the enterprise (or inter-enterprise) business processes;
+    \item service representation implements services using service orchestration;
+    \item it places unique requirements on the infrastructure;
+    \item implementations are environment-specific;
+    \item it requires strong governance of service representation and implementation.
+\end{enumerate}
 A service:
-\begin{itemize}
-    \item Is a logical representation of a repeatable business activity that has a specified outcome (e.g., check customer credit, provide weather data, consolidate drilling reports);
-    \item Is self-contained;
-    \item May be composed of other services;
-    \item Is a “black box” to consumers of the service.
-\end{itemize}
+\begin{enumerate}
+    \item is a logical representation of a repeatable business activity that has a specified outcome (e.g., check customer credit, provide weather data, consolidate drilling reports);
+    \item is self-contained;
+    \item may be composed of other services;
+    \item is a “black box” to consumers of the service.
+\end{enumerate}
 
 \section{Project architecture}
-The implemented architecture follows the idea of SOA. It's based on a series of services that read the input from data lake and writes the result on the data lake. The final result is a pipeline of services, executed one after the other.
+The implemented architecture follows the idea of SOA. It's based on a series of services that read the input from the data lake and write the result on the data lake. The final result is a pipeline of services, executed one after the other.
+\todo[inline]{mettere a posto immagine}
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.75]{images/architecture/architecture_service_example.png}
     \caption{Architecture example}
     \label{fig:architecture_example}
 \end{figure}
-Every service executed is a transaction, if there is an error in the execution there's no update in written data. Reading and writing to disk is the most efficient approach, because it avoids to break the memory managing big datasets. Using Python, time complexity scales linearly adding cluster nodes: for example, if a computation takes 30 minutes with 5 nodes, it takes 15 minutes with 10 nodes. 
+Every service executed is a transaction, if there is an error in the execution there's no update in written data. Reading and writing to disk is the most efficient approach, because it avoids to break the memory managing big datasets. \todo[inline]{controlalre questa cosa}Using Python, time complexity scales linearly adding cluster nodes: for example, if a computation takes 30 minutes with 5 nodes, it takes 15 minutes with 10 nodes. 
 
 \subsection{Categories of services}
-In the implemented framework there are two main categories of services:
-\begin{itemize}
-    \item \textbf{Preprocessing services}: preprocessing services are services that prepare the dataset to be used. Those services cover the corrective operations that are applied on the original dataset: textual data is cleaned from special characters, documents are adapted in order to be used further on, documents are filtered given a condition, and so on.  \\
+In the implemented framework there are two main categories of services.
+\begin{enumerate}
+    \item \textbf{Preprocessing services}: preprocessing services are services that prepare the dataset to be used. Those services cover the corrective operations that are applied on the original dataset: textual data are cleaned from special characters, documents are adapted in order to be used further on, documents are filtered given a condition, and so on.  \\
     In this category there are two services: \emph{cleaning} and \emph{filtering} services.
     \item \textbf{Processing services}: processing services are services that constitutes the core of the framework: in those services, data is processed in order to produce usable embedding representation in order to perform a scoring algorithm to fulfill a semantic similarity search task. \\
     In this category there are three services: \emph{embedding extraction}, \emph{numerosity reduction} and \emph{scoring} services.
-\end{itemize}
+\end{enumerate}
 
 \subsection{DAG}
-Once defined the services that need to be executed, these make up a so called Direct Acyclical Graph of execution: it consists in a pipeline where the result of a service execution is the input for the subsequent service. Ideally, the correct form of the DAG is the following:
-\begin{figure}[h]
+Once defined the services that need to be executed, these make up a so called Direct Acyclical Graph of execution: it consists of a pipeline where the result of a service execution is the input for the subsequent service. Ideally, the correct form of the DAG is visible in Figure \ref{fig:dag_example}:
+\todo[inline]{mettere a posto immagine}
+\begin{figure}[H]
     \centering
     \includegraphics[scale=0.5]{images/architecture/dag_theory.png}
     \caption{DAG example}
     \label{fig:dag_example}
 \end{figure}
-As visible in Figure \ref{fig:dag_example}, the two phases are subsequent and linked. If anything breaks the pipeline, the dataset will be updated to the last written result, allowing to restart from that checkpoint and not recomputing from the beginning, saving up precious machine-time.
+The two phases (\emph{preprocessing} and \emph{processing}) are subsequent and linked. If anything breaks the pipeline, the dataset will be updated to the last written result, allowing to restart from that checkpoint and not recomputing from the beginning, saving up precious machine-time.
 \subsection{Orchestrator}
-An orchestrator is a module of a framework which has the task of managing the execution of other modules in order to guarantee the right pipeline execution. The orchestrator reads a series of messages that parametrize different services, than executes the associated services passing read messages as service input. Every message is a correctly formatted JSON object which contains all values that are necessary. An example of parameter message is visible in Listing 1.1:
+An orchestrator is a module of a framework which has the task of managing the execution of other modules in order to guarantee the right pipeline execution. The orchestrator reads a series of messages that parametrize different services, than executes the associated services passing read messages as service input. Every message is a correctly formatted JSON object which contains all values that are necessary. An example of parameter message is visible in Listing \ref{parameter_message}:
 \\
 \begin{center}
-    \begin{lstlisting}[language=json, caption="Parameter message example", captionpos=b]
+    \begin{lstlisting}[language=json, caption="Parameter message example", captionpos=b, label={parameter_message}]
         {
          "service_name": "test_service",
          "parameter_0": "value",
@@ -109,11 +112,10 @@ An orchestrator is a module of a framework which has the task of managing the ex
                              "hyperparameter_m"]
         }
     \end{lstlisting}
-    \label{json_message}
 \end{center}
 
 Each of the above parameters and hyperparameters are passed to the associated service in order to instantiate different variables that will drive the service execution.
-The pseudocode for the orchestrator is shown in Algorithm 1:
+The pseudocode for the orchestrator is shown in Algorithm \ref{alg_orchestrator}:
 \begin{center}
     \begin{algorithm}[H]
      \KwData{List of JSON messages}
@@ -124,8 +126,10 @@ The pseudocode for the orchestrator is shown in Algorithm 1:
       call right service\;
       pass current message as input\;
      }
-     \caption{Orchestrator pseudocode}
+    \caption{Orchestrator pseudocode}
+    \label{alg_orchestrator}
     \end{algorithm}
+    
 \end{center}
 
 \end{document}

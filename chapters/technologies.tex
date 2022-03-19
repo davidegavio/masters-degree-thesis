@@ -4,40 +4,40 @@
 \chapter{Technologies}
 \section{Cluster computing}
 Modern applications require to deal with immense amount of data as quick as possible. In many of these applications, data is extremely regular, so there is opportunity to exploit parallelism. Examples of possible applications are:
-\begin{itemize}
-    \item Web page ranking
-    \item Social networks analysis
-    \item Parallelizable computations
-\end{itemize}
+\begin{enumerate}
+    \item Web page ranking;
+    \item Social networks analysis;
+    \item Parallelizable computations.
+\end{enumerate}
 This parallelization is not achieved using a super computer that can handle the computation, but is achieved using ``computing clusters''. Computing clusters are large collections of commodity hardware, including conventional processors, connected by Ethernet network. The software stack begins with a new form of file system, called a ``distributed file system'', which features much larger units than the disk blocks in a conventional operating system. Distributed file systems also provide replication of data or redundancy to protect against the frequent media failures that occur when data is distributed over thousands of low-cost compute nodes \cite{leskovec_rajaraman_ullman_2020}.
 
 \subsection{Big data}
 Big data \cite{Gandomi2015BeyondTH} is high-volume, high-velocity and/or high-variety information assets that demand cost-effective, innovative forms of information processing that enable enhanced insight, decision making, and process automation \cite{bigdatagartner}.
-\begin{itemize}
-    \item \textbf{Volume}: the magnitude of data. Big data sizes could be terabytes or even petabytes
-    \item \textbf{Variety}: the structural heterogeneity in a dataset. Data could be structured, semi-structured or unstructured
-    \item \textbf{Velocity}: data generation rate. Data analysis speed is a strongly connected concept: higher the velocity, higher the needed analysis speed
-\end{itemize}
+\begin{enumerate}
+    \item \textbf{Volume}: the magnitude of data. Big data sizes could be terabytes or even petabytes.
+    \item \textbf{Variety}: the structural heterogeneity in a dataset. Data could be structured, semi-structured or unstructured.
+    \item \textbf{Velocity}: data generation rate. Data analysis speed is a strongly connected concept: the higher the velocity, the higher the needed analysis speed.
+\end{enumerate}
 Other mentioned dimensions that are not part of the ``core'' definition:
-\begin{itemize}
-    \item \textbf{Veracity}: the unreliability of some data sources. For example, social media sentiments are a uncertain data source, because they imply human judgement;
-    \item \textbf{Variability}: the variation in data flow rates. Data could be produced by sources at not constant rates;
-    \item \textbf{Complexity}: the heterogeneity of data sources. Being generated through a myriad of sources, big data must be cleaned and connected in order to be used;
+\begin{enumerate}
+    \item \textbf{Veracity}: the unreliability of some data sources. For example, social media sentiments are an uncertain data source, because they imply human judgement.
+    \item \textbf{Variability}: the variation in data flow rates. Data could be produced by sources at not constant rates.
+    \item \textbf{Complexity}: the heterogeneity of data sources. Being generated through a myriad of sources, big data must be cleaned and connected in order to be used.
     \item \textbf{Value}: the importance of big data. Being characterized by a ``low value density'', a big quantity must be analyzed in order to obtain an high value and be remunerative.
-\end{itemize}
+\end{enumerate}
 \subsection{Distributed file system}
 To exploit cluster computing, data must be organized differently from the conventional file systems of single computers. This new organization is called Distributed file system (DFS) and is used as follows:
-\begin{itemize}
-    \item Files can be huge, possibly terabyte in size;
-    \item Files are rarely updated. They are read as input for calculation and possibly additional data is appended to files.
-\end{itemize}
-Files are divided into chunks. Chunks are replicated on different computer nodes. If chunks are replicated on different racks, like in Figure \ref{fig:racks_dfs}, a rack failure won't cause any data loss.
+\begin{enumerate}
+    \item files can be very large, up to terabytes in size;
+    \item files are rarely updated. They are read as input for calculation and possibly additional data is appended to files.
+\end{enumerate}
+Files are divided into chunks. Chunks are replicated on different computer nodes. A collection of several computer nodes connected by the same network switch constitutes a rack. If chunks are replicated on different racks, like in Figure \ref{fig:racks_dfs}, a rack failure won't cause any data loss.
 Examples of DFS are:
-\begin{itemize}
+\begin{enumerate}
     \item Google File System (\emph{GFS}) \cite{GhemawatSanjay2003TheGF}, the first of the class;
     \item Hadoop Distributed File System (\emph{HDFS}) \cite{Shvachko2010TheHD}, an open-source DFS used with Hadoop;
     \item Colossus \cite{10.1145/2491245}, an improved version of GFS.
-\end{itemize}
+\end{enumerate}
 \paragraph{Architecture} HDFS relies on a \emph{master-slave} architecture composed by a master server, the \emph{NameNode}, and from several slave server, the \emph{DataNodes}, generally one per node in the cluster. The NameNode manages the file system namespace and regulates access to files by clients. Each DataNode manages storage attached to the nodes that they run on. In Figure \ref{fig:hdfs_architecture}, is visible a simple schema of HDFS architecture.
 \begin{figure}[H]
     \centering
@@ -46,135 +46,139 @@ Examples of DFS are:
     \label{fig:hdfs_architecture}
 \end{figure}
 
-\textbf{Rack awareness}: HDFS stores replicated datablocks in at least two different racks in order to improve data availability, reliability and network bandwidth utilization. If the so called replication factor is three, a block is replicated on the local rack and two more replicas are placed in the same remote rack. This allows data recovery in case of connection loss among nodes. Even if unlikely to happen, a broken rack doesn't cause a big data loss because data are replicated over different racks, so lost blocks are read from the remaining rack and replicated again in order to guarantee availability, reliability and network bandwidth utilization. In Figure \ref{fig:racks_dfs} is visible the rack organization of a DFS.
+\textbf{Rack awareness}: HDFS stores replicated datablocks in at least two different racks in order to improve data availability, reliability and network bandwidth utilization. If the so called replication factor is three, a block is replicated on the local rack and two more replicas are placed in a same remote rack. This allows data recovery in case of connection loss among nodes. The inability to reach a rack (e.g. network problems) doesn't cause a big data loss because data are replicated over different racks, so lost blocks are read from the remaining rack and replicated again in order to guarantee availability, reliability and network bandwidth utilization. In Figure \ref{fig:racks_dfs} is visible the rack organization of a DFS.
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.35]{images/cluster_computing/racks_dfs.png}
+    \includegraphics[scale=.5]{images/cluster_computing/racks_dfs.png}
     \caption{HDFS rack architecture}
     \label{fig:racks_dfs}
 \end{figure}
 
 \subsection{MapReduce}
-MapReduce \cite{Dean2004MapReduceSD} is a distributed computing framework that is used to manage many large-scale, parallel computations in a way that is tolerant of hardware faults. A MapReduce computation consists of:
-\begin{itemize}
-    \item Map task: takes in input one or more data chunks and returns a sequence of \emph{key-value} pairs
-    \item Reduce task: combines all the values associated with a key, one key at a time
-\end{itemize}
+MapReduce \cite{Dean2004MapReduceSD} is a distributed computing framework that is used to manage many large-scale, parallel computations in a way that is tolerant of hardware faults. Typically the compute nodes and the storage nodes are the same, that is, the MapReduce framework and the HDFS are running on the same set of nodes. This configuration allows the framework to effectively schedule tasks on the nodes where data is already present, resulting in very high aggregate bandwidth across the cluster, increased computational performances and efficiency. A MapReduce computation consists of:
+\begin{enumerate}
+    \item Map task: takes in input one or more data blocks and returns a sequence of \emph{key-value} pairs;
+    \item Reduce task: combines all the values associated with a key, one key at a time.
+\end{enumerate}
+The execution overview is visible in Figure \ref{fig:map_reduce}
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.55]{images/cluster_computing/map_reduce_schema.png}
-    \caption{MapReduce}
+    \includegraphics[scale=.35]{images/cluster_computing/map_reduce_schema.png}
+    \caption{MapReduce execution overview}
     \label{fig:map_reduce}
 \end{figure}
-An example of computation is visible in Figure \ref{fig:map_reduce}
 \subsubsection{Map task}
-The input files for a Map task are elements of any type: tuple, document, \dots \\
-A chunk is a collection of elements, and no element is stored across two chunks. 
+The input files for a Map task are elements of any type: tuple, document, \dots, organized in key-value pair (\emph{k, v})
+A block is a collection of elements, and no element is stored across two chunks. 
 A Map task produces zero or more key-value pairs, with keys not necessarily uniques.
 \subsubsection{Grouping by key}
 Once the Map task is over, all key-value pairs are grouped by key, with a single list of values associated to that key.
 \subsubsection{Reduce task}
 A Reduce task takes as input a pair of key, list of values associated to that key. The task produces a sequence of zero or more key-value pairs as output. The function that is applied on the list of values for a given key is called \emph{reducer}. For each Reduce task, there could be more reducers.
 \subsubsection{MapReduce execution}
-\begin{itemize}
-    \item The user program forks a Master controller process and some Worker processes at different compute nodes. A Worker handles Map tasks or Reduce tasks, but not both
-    \item According to the user program, the Master creates a given number of Map and Reduce tasks and assigns them to the Workers
-    \item The Master keeps track of the status of each Map and Reduce task (idle, executing, completed) and when a Worker finishes a task, the Master schedules a new task for that Worker
-\end{itemize}
+\begin{enumerate}
+    \item The user program forks a Master controller process and some Worker processes at different compute nodes. A Worker handles Map tasks or Reduce tasks, but not both.
+    \item According to the user program, the Master creates a given number of Map and Reduce tasks and assigns them to the Workers.
+    \item The Master keeps track of the status of each Map and Reduce task (idle, executing, completed) and when a Worker finishes a task, the Master schedules a new task for that Worker.
+\end{enumerate}
 \subsubsection{Node failure}
-\begin{itemize}
-    \item If the Master fails, the entire MapReduce job must be restarted
-    \item If a Map worker fails, all its tasks (even completed), are rescheduled to other workers to complete them eventually
-    \item If a Reduce worker fails, its Reduce tasks will be put to idle status and rescheduled on another Reduce worker
-\end{itemize}
+\begin{enumerate}
+    \item If the Master fails, the entire MapReduce job must be restarted;
+    \item If a Map worker fails, all its tasks (even completed), are rescheduled to other workers to complete them eventually;
+    \item If a Reduce worker fails, its Reduce tasks will be put to idle status and rescheduled on another Reduce worker.
+\end{enumerate}
 \subsection{Spark}
-\textbf{Workflow systems}: Workflow systems extend MapReduce from the simple two-step workflow (the Map function feeds the Reduce function) to any collection of functions, with an acyclic graph representing workflow among the functions. That is, there is an acyclic flow graph whose arcs a → b represent the fact that function a’s output is an input to function b \cite{leskovec_rajaraman_ullman_2020}.
-Spark is and advanced workflow system, because of:
-\begin{itemize}
-    \item A more efficient failure handling;
-    \item A more efficient way of grouping tasks among compute nodes and scheduling execution of functions;
-    \item Integration of programming languages features and function libraries;
-    \item RDD caching: caching RDDs allows to reuse them in order to reduce computation avoiding recalculating already cached operations, improving performances. 
-\end{itemize}
-Spark is based on Resilient Distributed Datasets (RDD). An RDD is distributed because it can be split into chunks and held at different compute nodes. They're resilient because it's expected that they can be recovered in case of partial or total loss. An RDD can contain elements of any kind, without restrictions.
+\paragraph{Workflow systems}Workflow systems extend MapReduce from the simple two-step workflow (the Map function feeds the Reduce function) to any collection of functions, with an acyclic graph representing workflow among the functions. That is, there is an acyclic flow graph whose arcs $a$ → $b$ represent the fact that function $a$’s output is an input to function $b$ \cite{leskovec_rajaraman_ullman_2020}.
+\paragraph{RDD} Spark is based on Resilient Distributed Datasets (RDD), which is a collection of elements partitioned across the nodes of the cluster that can be operated on in parallel. An RDD is distributed because it can be split into chunks and held at different compute nodes. They're resilient because it's expected that they can be recovered in case of partial or total loss. An RDD can contain elements of any kind, without restrictions.
 Operations in Spark are:
-\begin{itemize}
-    \item Transformations: operations applied to an RDD that produce another RDD
-    \item Actions: perform operations on an RDD and pass back the result to the application that called the Spark program
-\end{itemize}
+\begin{enumerate}
+    \item Transformations: operations applied to an RDD that produce another RDD;
+    \item Actions: perform operations on an RDD and pass back the result to the application that called the Spark program.
+\end{enumerate}
+Spark is and advanced workflow system, because of:
+\begin{enumerate}
+    \item a more efficient failure handling;
+    \item a more efficient way of grouping tasks among compute nodes and scheduling execution of functions;
+    \item integration of programming languages features and function libraries;
+    \item RDD caching: caching RDDs allows to reuse them in order to reduce computation avoiding recalculating already cached operations, improving performances. 
+\end{enumerate}
 \subsubsection{Map, FlatMap and Filter}
 Differently from MapReduce approach, in Spark Map functions can be applied not only on key-value pairs, but can be applied to any kind of object, producing one object as result. 
 FlatMap is the same operation of Map in MapReduce, but without the requirement that all types be key-value pairs. Filter is a transformation that produces an RDD with only the objects that return true to a given predicate.
 \subsubsection{Reduce}
-Reduce operation is an action. Because of this, it returns a value and not another RDD. On an RDD, Reduces is applied on every pair of consecutive elements until only one lement remains, that becomes the result of the Reduce operation.
+Reduce operation is an action. Because of this, it returns a set of values --- possibly smaller then the set taken in input --- and not another RDD. On an RDD, Reduce is applied on every pair of consecutive elements until only one lement remains, that becomes the result of the Reduce operation.
 \subsubsection{Spark implementation}
 Like Hadoop or other MapReduce implementations, Spark manages large RDDs in the same way: it divides it in splits (MapReduces's chunks) and spreads them to different compute nodes in order to allow parallel computation.
 \paragraph{Lazy evaluation}
 The first difference from other MapReduce implementations, is that Spark is lazy evaluated: transformations are not applied on an RDD until it is required to do so, typically in correspondence of an action.
 \paragraph{Resilience of RDDs}
-Performing operations on RDDs, creates a \emph{lineage} of those RDDs, so that in case of failure, Spark is able to recreate the RDD (or just a split) looking at its lineage.
+Performing operations on RDDs creates a \emph{lineage} of those RDDs, so that in case of failure Spark is able to recreate the RDD (or just a split) looking at its lineage.
 \newpage
 
 \section{Transformers}
 Until massive adoption of transformer technology, the dominant sequence transduction models were based on complex recurrent or convolutional neural networks that include an encoder and a decoder.
-Transformers are a network architecture based only on attention mechanism, not explicitly exploiting recurrence and convolution, differently from previously adopted system like recurrent neural networks, long short-term memory and gated recurrent neural networks. Transformers are used to draw global dependencies between input and output. They are used to better handle long-range dependencies within a text. These technologies allow to represent texts in a more semantical way, better capturing context and relations among different parts of the text \cite{vaswani2017attention}. Transformers are the true state of the art in NLP field, since 2018 (year of BERT \cite{devlin2018bert}\cite{bert_blog_post} release) transformers are used in different fields that require a semantic representation of texts. Some examples of Transformer implementations are shortly described here below.
+Transformers are a network architecture based only on a attention mechanism, which can be described as mapping a query and a set of key-value pairs to an output (query, keys, values and output are all vectors) \cite{vaswani2017attention}, not explicitly exploiting recurrence and convolution, differently from previously adopted system like recurrent neural networks, long short-term memory and gated recurrent neural networks. Transformers are used to draw global dependencies between input and output. They are used to better handle long-range dependencies within a text. These technologies allow to represent texts in a more semantical way, better capturing context and relations among different parts of the text \cite{vaswani2017attention}. Transformers are the true state of the art in NLP field, since 2018 (year of BERT \cite{devlin2018bert}\cite{bert_blog_post} release) transformers are used in different fields that require a semantic representation of texts. Some examples of Transformer implementations are shortly described here below.
 \begin{enumerate}
-    \item \textbf{An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale}: in \cite{Dosovitskiy2021AnII}, researchers have applied Transformers directly on sub-portions of an image in order to obtain a representation that can be furtherly used for image classification tasks. Good results are shown when training happens on small datasets.
-    \item \textbf{Speech-Transformer: A No-Recurrence Sequence-to-Sequence Model for Speech Recognition}: in \cite{Dong2018SpeechTransformerAN}, researchers have presented the Speech-Transformer, a no-recurrence sequence-to-sequence model entirely relies on attention mechanisms to learn the positional dependencies, which can be trained faster with more efficiency. Results based on the Wall Street Journal speech recognition dataset show that the proposed technology achieves an error rate of 10.9\%, while the whole training process only takes 1.2 days on 1 GPU, significantly faster than the published results of recurrent sequence-to-sequence models. 
+    \item \textbf{An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale}: in \cite{Dosovitskiy2021AnII}, researchers have applied Transformers directly on sub-portions of an image in order to obtain a representation that can be further used for image classification tasks. Good results are shown when training happens on small datasets.
+    \item \textbf{Speech-Transformer: A No-Recurrence Sequence-to-Sequence \\Model for Speech Recognition}: in \cite{Dong2018SpeechTransformerAN}, researchers have presented the Speech-Transformer, a no-recurrence sequence-to-sequence model entirely rely on attention mechanisms to learn the positional dependencies, which can be trained faster and with more efficiency. Results based on the Wall Street Journal speech recognition dataset show that the proposed technology achieves an error rate of 10.9\%, while the whole training process only takes 1.2 days on 1 GPU, significantly faster than the published results of recurrent sequence-to-sequence models. 
 \end{enumerate}
 
 \newpage
 \subsection{Architecture}
-Transformers, like most competitive neural sequence transduction, have an encoder-decoder structure with the encoder mapping to an input sequence of symbols $(x_1, \dots, x_n)$ to a continuous representation $z = (z_1, \dots, z_n)$. Given $z$, the decoder generates an output sequence $(y_1, \dots, y_m)$ of symbols one element at a time. In the left and right halves of Figure \ref{fig:transformer_architecture} is shown the fully-connected layers of both encoders and decoders.
+Transformers, like most competitive neural sequence transduction, have an encoder-decoder structure with the encoder mapping an input sequence of symbols $(x_1, \dots, x_n)$ to a continuous representation $z = (z_1, \dots, z_n)$. Given $z$, the decoder generates an output sequence $(y_1, \dots, y_m)$ of symbols one element at a time. In the left and right halves of Figure \ref{fig:transformer_architecture} is shown the fully-connected layers of both encoders and decoders.
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.35]{images/transformer/transformer_model_architecture.png}
+    \includegraphics[scale=0.4]{images/transformer/transformer_model_architecture.png}
     \caption{Transformer architecture}
     \label{fig:transformer_architecture}
 \end{figure}
 
 \subsection{Encoder}
-The encoder is composed of a stack of $N=6$ identical layers, each one has two sub-layers:
-\begin{itemize}
-    \item a multi-head self-attention mechanism
-    \item a position-wise fully connected feed-forward network
-\end{itemize}
+The encoder from Vaswani's research \cite{vaswani2017attention} is composed of a stack of $N=6$ identical layers, each one has two sub-layers:
+\begin{enumerate}
+    \item a multi-head self-attention mechanism;
+    \item a position-wise fully connected feed-forward network.
+\end{enumerate}
 A residual connection followed by layer normalization is employed around each sub-layer. All sub-layers in the model produce an output of dimension $d_{model} = 512$.
 
 \subsection{Decoder}
-The decoder is composed of a stack of $N=6$ identical layers. The decoder inserts a third sub-layer to the two encoder sub-layer. This sub-layer performs multi-head attention over the output of the encoder stack. Similarly to the encoder, around each of the sub-layers are employed residual connections followed by layer normalization. The self-attention sub-layer is modified in the decoder stack to prevent positions from attending to subsequent positions. This kind of masking, combined with fact that the output embeddings are offset by one position, ensures that the predictions for position $i$ can depend only on the known outputs at positions less than $i$. All sub-layers in the model produce an output of dimension $d_{model} = 512$.
+The decoder from Vaswani's research \cite{vaswani2017attention} is composed of a stack of $N=6$ identical layers. The decoder inserts a third sub-layer to the two encoder sub-layer. This sub-layer performs multi-head attention over the output of the encoder stack. The idea behind multi-head attention is to allow the attention function to extract information from different representation subspaces, which would, otherwise, not be possible with a single attention head. Similarly to the encoder, around each of the sub-layers are employed residual connections followed by layer normalization. This kind of masking combined the output embeddings, that are offset by one position, ensures that the predictions for position $i$ can depend only on the known outputs at positions less than $i$. All sub-layers in the model produce an output of dimension $d_{model} = 512$.
 
 \subsection{Attention}
+\todo[inline]{rispiegare bene le formule}
 An attention function consists in mapping a query and a set of key-value pairs to an output, where the query, keys, values and output are all vectors. The output is computed as a weighted sum of the values, with weights computed by a compatibility function of the query with the corresponding key.
 \subsubsection{Scaled dot-product attention} 
-\begin{figure}[h]
-    \centering
-    \includegraphics[scale=0.35]{images/transformer/scaled_dot_product_attention.png}
-    \caption{Scaled dot-product attention}
-    \label{fig:scaled_dot-product_attention}
-\end{figure}
 The input consists of queries and keys of dimension $d_k$, and values of dimension $d_v$.
-To obtain the weights on the values, the dot product of the query with all keys is performed, dividing each by $\sqrt{d_k}$ and applying a softmax function.
-The queries, values and keys sets are packed together into Q (queries), K (keys) and V (values) sets. 
+To obtain the weights on the values, the dot product of the query with all keys is performed, dividing each by $\sqrt{d_k}$ and applying a softmax function. The queries, values and keys sets are packed together into Q (queries), K (keys) and V (values) sets. 
 The attention function is computed using Q, K and V matrices, producing an output matrix in this way:
 \begin{center}
     $Attention(Q, K, V) = softmax(\frac{QK^T}{\sqrt{d_k}})V$
 \end{center}
 Scaled dot-product attention is both faster and more space efficient of two commonly used attention functions: additive attention and dot-product (multiplicative) attention. These performances reachable because of the highly optimized implementation of matrix multiplication code.
+\begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.35]{images/transformer/scaled_dot_product_attention.png}
+    \caption{Scaled dot-product attention}
+    \label{fig:scaled_dot-product_attention}
+\end{figure}
 \subsubsection{Multi-head attention}
+As visible in Figure \ref{fig:multi-head_attention}, queries, values and keys are linearly projected $h$ times, with different learned linear projections to $d_k$, $d_q$ and $d_v$ dimensions respectively. The attention function is performed in parallel on each projection, yielding $d_v$-dimensional output values. These are concatenated and once again projected, resulting in the final values. \\
+Multi-head attention allows the model to jointly attend to information form different representation subspaces at different positions. 
+\begin{center}
+    $\mathrm{MultiHead}(Q, V, K) =\mathrm{Concat}(head_1, \dots, head_h)W^O$\\
+    where $head_i = Attention(QW^Q_i, KW^K_i, VW^V_i)$
+\end{center}
+Where the projections are parameter matrices 
+\begin{center}
+    $W^Q_i\in\R^{d_{model \times d_k}}, W^K_i\in\R^{d_{model \times d_k}}, W^V_i\in\R^{d_{model \times d_k}}$ and $ W^O_i\in\R^{d_{model \times d_k}}$
+\end{center}
+
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.25]{images/transformer/multi-headed_attention.jpeg}
     \caption{Multi-head attention}
     \label{fig:multi-head_attention}
 \end{figure}
-As visible in Figure \ref{fig:multi-head_attention}, queries, values and keys are linearly projected $h$ times, with different learned linear projections to $d_k$, $d_q$ and $d_v$ dimensions respectively. The attention function is performed in parallel on each projection, yielding $d_v$-dimensional output values. These are concatenated and once again projected, resulting in the final values. \\
-Multi-head attention allows the model to jointly attend to information form different representation subspaces at different position. 
-\begin{center}
-    $\mathrm{MultiHead}(Q, V, K) =\mathrm{Concat}(head_1, \dots, head_h)W^O$\\
-    where $head_i = Attention(QW^Q_i, KW^K_i, VW^V_i)$
-\end{center}
-Where the projections are parameter matrices $W^Q_i\in\R^{d_{model \times d_k}}, W^K_i\in\R^{d_{model \times d_k}}, W^V_i\in\R^{d_{model \times d_k}}$ and $ W^O_i\in\R^{d_{model \times d_k}}$.
 
 \subsection{Position-wise Feed-Forward Networks}
 Every layer in both encoders and decoders contain a fully connected feed-forward neural network, which is applied to each position separately and identically.
@@ -192,7 +196,7 @@ Since the model contains neither recurrence nor convolution, relative or absolut
 
 \subsection{Self-attention motivations}
 In order to understand why self-attention layers are used, it's necessary to compare them with recurrent and convolutional layers. There are three aspects that are important to consider: the total computation complexity per layer, the amount of computation that can be parallelized (intended as the minimum number of sequential operations required) and the path length between long-range dependencies in the network. \\
-In terms of computation that can be parallelized, a self-attention layer connects all positions with a constant number of sequentially executed operations, whereas a recurrent layer requires $O(n)$ sequential operations. In terms of computational complexity, self-attention layers are faster than recurrent layers when the sequence length $n$ is smaller than the representation dimensionality $d$, which is most often the case with sentence representations used by state of the art models in machine translations, such as word-piece and byte-pair representations. Table \ref{table:complexity_self_attention}, shows the complexity comparison between self attention, recurrence and convolutions from the point of view of maximum path lengths, per-layer complexity and minimum number of sequential operations for different layer types. 
+In terms of computation that can be parallelized, a self-attention layer connects all positions with a constant number of sequentially executed operations, whereas a recurrent layer requires $O(n)$ sequential operations. In terms of computational complexity, self-attention layers are faster than recurrent layers when the sequence length $n$ is smaller than the representation dimensionality $d$, which is most often the case with sentence representations used by state-of-the-art models in machine translations, such as word-piece and byte-pair representations. Table \ref{table:complexity_self_attention} shows the complexity comparison between self attention, recurrence and convolutions from the point of view of maximum path lengths, per-layer complexity and minimum number of sequential operations for different layer types. 
 
 \begin{table}[H]
 \centering

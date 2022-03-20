@@ -38,7 +38,7 @@
 \begin{document}
 \chapter{Methods}
 \label{methods}
-In this chapter is explained the finality of each service. \todo[inline]{chiedere ad artea cosa dire}Due to legal reasons in this manuscript there won't be any code or dataset example. Each service component will be explained through a pseudocode representation in order to make the whole system more understandable.\\
+In this chapter is explained the finality of each service. Due to legal reasons in this manuscript there won't be any code or dataset example. Each service component will be explained through a pseudocode representation in order to make the whole system more understandable.\\
 All services are Jupyter notebooks that exploit the parallelization ability of PySpark, working on several rows at the same time using MapReduce approach which is the \emph{de facto} standard in big data field.
 \section{Preprocessing}
 As said in Chapter 3, this is the phase where the dataset is elaborated in order to be used further on. 
@@ -274,7 +274,7 @@ Given a graph G with vertices labelled {1, 2, ..., $n$}, its \emph{adjacency mat
      \KwResult{Reduced dataset}
      initialization \\
      weight matrix calculation \\
-     MST \\
+     MST computation \\
      \ForEach{edge in MST}{
         \If{edge weight > similarity threshold}{
             merge similar sentence embeddings \\

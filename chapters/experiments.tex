@@ -36,7 +36,7 @@
 \begin{document}
 \chapter{Experiments and results}
 \section{Experimental setup}
-Due to computation time constraints, it has not been possible to perform experiments on the whole dataset. Thus, the dataset has been reduced in order to make possible the execution of different experiments in a reasonable time. As mentioned before in Chapter 4, a resulting dataset of 100 records has been created. Each record is a key-value pair object composed like Listing \ref{exp_dataset_object}:
+Due to computation time constraints, it has not been possible to perform experiments on the whole document corpus made available by \emph{artea.com}. Thus, the dataset has been reduced in order to make possible the execution of different experiments in a reasonable time. As mentioned before in Chapter 4, a resulting dataset of 100 records has been created. For each of 10 queries, 5 related and 5 not related documents were searched manually. Each record is a key-value pair object composed like Listing \ref{exp_dataset_object}:
 \begin{center}
     \begin{lstlisting}[language=json, caption="Experimental dataset object", captionpos=b, label={exp_dataset_object}]
         {
@@ -54,7 +54,7 @@ Due to computation time constraints, it has not been possible to perform experim
     \end{lstlisting}
 \end{center}
 All the informative content is maintained. At this point, the memory footprint of the dataset is at his peak, because it contains all the previous fields both of the original objects, query and search documents.\\
-As previously mentioned, the dataset is composed by one hundred query-search documents coupled: these couples have been decided in a qualitative way, choosing the right documents for each query. For each query there are five documents that are strongly correlated to it and five documents that are not correlated at all. This organization is useful both form the point of view of evaluation (as previously mentioned in Chapter 4), but it is also useful from a computational point of view, given that the dataset is rather small.
+As mentioned in Chapter 4, the dataset is composed by one hundred query-search documents coupled: these couples have been decided in a qualitative way, choosing the right documents for each query. For each query there are five documents that are strongly correlated to it and five documents that are not correlated at all. This organization is useful both form the point of view of evaluation (as previously mentioned in Chapter 4), but it is also useful from a computational point of view, given that the dataset is rather small.
 An idea of the resulting dataset is visible in Table \ref{dataset_shape}, for sake of brevity some information have been omitted.
 \begin{table}[H]
 \centering
@@ -97,8 +97,7 @@ NumPy is the fundamental package for scientific computing in Python. It is a Pyt
 SciPy is a collection of mathematical algorithms and convenience functions built on the NumPy extension of Python. It adds significant power to the interactive Python session by providing the user with high-level commands and classes for manipulating and visualizing data. With SciPy, an interactive Python session becomes a data-processing and system-prototyping environment rivaling systems, such as MATLAB, IDL, Octave, R-Lab, and SciLab.
 The additional benefit of basing SciPy on Python is that this also makes a powerful programming language available for use in developing sophisticated programs and specialized applications. Scientific applications using SciPy benefit from the development of additional modules in numerous niches of the software landscape by developers across the world. Everything from parallel programming to Web and data-base subroutines and classes have been made available to the Python programmer. All of this power is available in addition to the mathematical libraries in SciPy \cite{2020SciPyNMeth}.
 \subsubsection{Transformers}
-\todo[inline]{spiegare tokenizer}
-\emph{Huggingface Transformers} provides thousands of pretrained models to perform tasks on texts such as classification, information extraction, question answering, summarization, translation, text generation and more in over 100 languages. In the project has been used the tokenizer associated to a given model in order to count how many tokens a sentence produces \cite{Wolf_Transformers_StateoftheArt_Natural_2020}.
+Huggingface \emph{Transformers} library provides thousands of pretrained models to perform tasks on texts such as classification, information extraction, question answering, summarization, translation, text generation and more in over 100 languages \cite{Wolf_Transformers_StateoftheArt_Natural_2020}.
 \subsubsection{scikit-learn}
 \emph{Scikit-learn} is an open source machine learning library that supports supervised and unsupervised learning. It also provides various tools for model fitting, data preprocessing, model selection and evaluation, and many other utilities \cite{scikit-learn}.
 \subsubsection{NetworkX}
@@ -134,7 +133,7 @@ In order to perform all the experiments,we have used the following cluster confi
 This setting allowed to execute an entire experiment, from dataset cleaning to evaluation, in a time between one and three hours, depending on the transformer model.
 
 \section{Results}
-As previously mentioned, the hyperparameters combination led to a series of different experiments. In the 52 performed experiments, there are great differences among hyperparameters settings.\\
+Using a different combination of hyperparameters for each execution led to a series of different experiments. Each experiment consisted in a combination of: transformer models, numerosity reduction similarity thresholds and voting techniques. Algorithms working with previously mentioned hyperparameters have been explained in Chapter 4.\\
 In Table \ref{tab:model_name_model_label} is visible the association between model label, model name and result entry in Tables \ref{tab:experimental_results_complete} and \ref{tab:experimental_results_best}. For readability reasons, each model name has been converted to a shorter and more readable label.
 \begin{table}[H]
     \centering
@@ -155,26 +154,13 @@ In Table \ref{tab:model_name_model_label} is visible the association between mod
 
 \subsection{Result discussion}
 In this subsection there will be a discussion about some important aspects of results that have emerged by our experiments. \\
-The first important aspect that emerges from performed experiments is that models trained using two specific datasets achieve better results overall than other models. As visible from Table \ref{tab:experimental_results_complete}, using models trained using a set of sentence pairs with a similarity score, like \emph{stsb-mpnet-base-v2}, and models trained using paraphrase datasets, like \emph{paraphrase-albert-base-v2}, show better result overall than other generic models and are visible in Table \ref{tab:experimental_results_best}. Those models show a very good result for \emph{Precision@100}, meaning that the framework is able to assign right documents to right queries, but it's interesting to notice also that they can separate quite well right documents form wrong ones, as visible looking at \emph{Difference mean} and \emph{Difference median} metrics.\\
+The first important aspect that emerges from performed experiments is that models trained using two specific datasets achieve better results overall than other models. As visible from Table \ref{tab:experimental_results_complete}, using models trained using a set of sentence pairs with a similarity score, like \emph{stsb-mpnet-base-v2} (STSBMpnetBaseV2), and models trained using paraphrase datasets, like \emph{paraphrase-albert-base-v2} (ParaphraseAlbertBaseV2), show better result overall than other generic models and are visible in Table \ref{tab:experimental_results_best}. Those models show a very good result for \emph{Precision@100}, which measures the percentage of right positioned documents in relation to the input query, meaning that the framework is able to assign right documents to right queries, but it's interesting to notice also that they can separate quite well right documents form wrong ones, as visible looking at \emph{Difference mean}, which measures the difference between the mean of correlated documents and not related documents, and \emph{Difference median} metrics, which measures the difference between the median similarity score of correlated documents and not related documents.\\
 Secondly, the implemented numerosity reduction shows a result conservation useful if memory usage is a concern: reducing space occupation and maintaining similar result is considerable as an achievement. The first line of Table \ref{tab:experimental_results_complete}, which is the best result achieved, shows how a 10\% reduction of the number of sentences in the corpus doesn't influence the final result. When dealing with big data this could become useful to reduce space and memory occupation. Obviously, this approach works well on a dataset built like the one used during the project, it needs further tests to see how it behaves on differently built datasets.\\
-Lastly, not furtherly specialized models like \emph{albert-base-v2} and \emph{distilbert-base-multilingual-cased} show worse results than others. In the project scope, is demonstrated that using those models doesn't reach good enough performances, emphasizing even more the concept that the model choice is crucial for a system like the one presented in this document and that the choice operation needs a big attention in order to make the best choice.
-
-Table \ref{tab:experimental_results_complete} gathers the whole set of experimental result:\\
-\paragraph{Table legend} \todo[inline]{spiegare nel testo sta roba}
-\begin{enumerate}
-    \item \textbf{Model name} (Model): a label given starting from the original model name.
-    \item \textbf{Precision@100} (P@100): as previously mentioned in Chapter 4, this metric measures the percentage of right positioned documents in relation to the input query.
-    \item \textbf{Difference mean} (Diff mean): as previously mentioned in Chapter 4, this is the difference between the mean of correlated documents and not-correlated documents. The higher the result, the higher the framework ability to recognize right documents from wrong.
-    \item \textbf{Difference median} (Diff median): as previously mentioned in Chapter 4, this is the difference between the median of correlated documents and not-correlated documents. The higher the result, the higher the framework ability to recognize right documents from wrong.
-    \item \textbf{Multilingual} (Multilang): if the model is multilingual or not.
-    \item \textbf{Reduction ratio} (Red ratio \%): the percentage of vectors removed.
-    \item \textbf{Voting technique} (Voting tech): the operation that aggregates the best results from voting, mean or median.
-    \item \textbf{Reduction percentage} (Red \%): every model produces a different range of similarity values when it come to reduce the numerosity. In order to compute and to compare the results, the reduction portion is calculated as the percentage of the range of values.
-\end{enumerate}
-
-\newpage
-
-\begin{table}
+Thirdly, Table \ref{tab:experimental_results_complete} show that for the project scope is generally better to use a monolingual model (in our case English) instead of using a multilingual one.\\
+Fourthly, Table \ref{tab:experimental_results_complete} show that for the project scope is generally better to use median as voting technique (Chapter 4) in order to compute the final result, as it output the best results. \\
+Lastly, not furtherly specialized models like \emph{albert-base-v2} (AlbertBaseV2) and \emph{distilbert-base-multilingual-cased} (DistilbertBaseMultilingualCased) show worse results than others. In the project scope, is demonstrated that using those models doesn't reach good enough performances, emphasizing even more the concept that the model choice is crucial for a system like the one presented in this document and that the choice operation needs a big attention in order to make the best choice.
+Table \ref{tab:experimental_results_complete} gathers the whole set of experimental result.
+\begin{table}[H]
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{||c|c|c|c|c|c|c|c||}
@@ -269,7 +255,7 @@ Mpnet                 & 0,84 & 0,12  & 0,12  & false & 15,72 & mean   & 0,5 \\
 \hline
 \end{tabular}
 }
-\caption{Best results}
+\caption{Best results table}
 \label{tab:experimental_results_best}
 \end{table}
 

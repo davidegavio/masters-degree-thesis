@@ -38,7 +38,7 @@
 \begin{document}
 \chapter{Methods}
 \label{methods}
-In this chapter there is is explained the finality of each service. \todo[inline]{chiedere ad artea cosa dire}Due to legal reasons in this manuscript there won't be any code or dataset example. Each service component will be explained through a pseudocode representation in order to make the whole system more understandable.\\
+In this chapter is explained the finality of each service. \todo[inline]{chiedere ad artea cosa dire}Due to legal reasons in this manuscript there won't be any code or dataset example. Each service component will be explained through a pseudocode representation in order to make the whole system more understandable.\\
 All services are Jupyter notebooks that exploit the parallelization ability of PySpark, working on several rows at the same time using MapReduce approach which is the \emph{de facto} standard in big data field.
 \section{Preprocessing}
 As said in Chapter 3, this is the phase where the dataset is elaborated in order to be used further on. 
@@ -47,7 +47,7 @@ Given a textual dataset, cleaning service performs all the operations needed to 
 \subsubsection{HTML cleaning}
 The first (parametrized) step is to remove all HTML special characters. This operation is preparatory for next phases that need to deal with human-readable texts. The pseudocode of HTML removal phase is visible in Algorithm \ref{alg_html_removal}.
 \begin{center}
-    \begin{algorithm}[H]
+    \begin{algorithm}[ht]
      \KwData{Textual dataset}
      \KwResult{Cleaned texts}
      initialization \\
@@ -62,9 +62,9 @@ The first (parametrized) step is to remove all HTML special characters. This ope
 \end{center}
 This service is based on Python HTML class \cite{html_parser}, which allows to parse textual files filled with HTML special characters and tags.
 \subsubsection{Sentence splitting}
-This is the first step to overcome transformer technology limitations: in order to not increase to much memory usage, transformers libraries set a maximum of tokens that the model is able to manage. Therefore, long texts are difficult to manage as a whole, so they need to be divided in sentences (splits). In Algorithm \ref{alg_split} is visible the pseudocode for splitting phase.
+This is the first step to overcome transformer technology limitations: in order to not increase to much memory usage, transformers libraries set a maximum of tokens that the model is able to manage. Therefore, long texts are difficult to manage as a whole, so they need to be divided in sentences (splits). In \mbox{Algorithm \ref{alg_split}} is visible the pseudocode for splitting phase.
 \begin{center}
-    \begin{algorithm}[H]
+    \begin{algorithm}[ht]
      \KwData{Cleaned dataset}
      \KwResult{Splitted texts}
      initialization \\
@@ -101,8 +101,7 @@ In order to obtain the best vectorial representation using transformers, splits 
     \end{algorithm}
 \end{center}
 \subsubsection{Split filtering}
-\todo[inline]{fare esempi di split filtering}
-The final step of cleaning service is split filtering. In this phase, splits that do not satisfy certain conditions are filtered out in order to keep only correct splits. In Algorithm \ref{alg_split_filtering} is visible the pseudocode for split filtering operation. 
+The final step of cleaning service is split filtering. In this phase, splits that do not satisfy certain conditions (splits too short, splits too long, splits with too many repeated words, \dots) are filtered out in order to keep only correct splits. In Algorithm \ref{alg_split_filtering} is visible the pseudocode for split filtering operation. 
 \begin{center}
     \begin{algorithm}[H]
      \KwData{Cleaned dataset}
@@ -123,8 +122,7 @@ The final step of cleaning service is split filtering. In this phase, splits tha
 \end{center}
 
 \subsection{Filtering}
-\todo[inline]{spiegare meglio join}
-In some applications, it is needed to reduce the number of records inside a dataset. In the implemented framework this is performed using the filtering service. Reading a list of keys which has to be kept, this service is able to filter out those keys that aren't part of the list mentioned earlier. Algorithms \ref{alg_filtering} shows how two datasets are joined in order to filter the bigger one.
+In some applications, it is needed to reduce the number of records inside a dataset. In the implemented framework this is performed using the filtering service. Reading a list of keys which has to be kept, this service is able to filter out those keys that aren't part of the list mentioned earlier. Algorithms \ref{alg_filtering} shows how two datasets are joined in order to filter the bigger one. This operation is simply an inner join between two datasets resulting in a smaller dataset due to the filter one.
 \begin{center}
     \begin{algorithm}[H]
      \KwData{Cleaned dataset}
@@ -150,13 +148,11 @@ This service is the core of the framework: decisions made in this service consti
     \item \textbf{XLM}.
 \end{enumerate} 
 \paragraph{BERT}
-BERT has been the first transformer model released after Vaswani's \cite{vaswani2017attention}. It has been released and open sourced by Google, reaching the state-of-the-art for NLP. Reading this Google post \cite{bert_blog_post}, BERT can represent a word using its surrounding context, contextualizing the representation. BERT has been the first deeply bidirectional, unsupervised language representation, pretrained using only a plain text corpus \cite{DBLP:journals/corr/abs-1810-04805}.
+BERT has been the first transformer model released after Vaswani's \cite{vaswani2017attention}. It has been released and open sourced by Google, reaching the state-of-the-art for NLP. Reading this Google post \cite{bert_blog_post}, BERT can represent a word using its surrounding scope, contextualizing the representation. BERT has been the first deeply bidirectional, unsupervised language representation, pretrained using only a plain text corpus \cite{DBLP:journals/corr/abs-1810-04805}.
 \paragraph{ALBERT}
 Like BERT, ALBERT has been released by Google. Looking at this blog post by Google \cite{albert_blog_post}, ALBERT implements two main design changes respecting to BERT, in order to optimize the performances. The first change is to factorize the embedding parametrization, splitting the embedding matrix between input-level embeddings with a relatively-low dimension, while the hidden-layer embeddings use higher dimensionalities. The second aspect on which ALBERT focuses is layer stacking: differently from BERT, in ALBERT there is a parameter sharing across the layers, resulting in a slightly diminished accuracy while reducing the size of the model \cite{DBLP:journals/corr/abs-1909-11942}.
 \paragraph{MPNET}
-\todo[inline]{spiegare xlnet}
-\todo[inline]{spiegare mlm e plm}
-MPNET has been released by Microsoft in 2020. As visible from their blog post \cite{mpnet_blog_post},  researchers that developed MPNET, realized that two of the main pretraining tasks of transformers, masked language modeling adopted in BERT and permuted language modeling adopted in XLNet, have different limitations. They came up with and approach that inherits the advantages of MLM and PLM and avoids their limitations. Masked language modeling (MLM) is proposed in BERT, which randomly masks some tokens with a masked symbol [M] and predicts the masked tokens given remaining tokens. Permuted language modeling (PLM) is proposed in XLNet, which randomly permutes a sequence and predicts the tokens in the right part (predicted part) in an autoregressive way. PLM can model the dependency among the predicted tokens with autoregressive prediction, but it cannot see the position information of the full sentence, which will cause mismatches between the pretraining and fine-tuning since the position information of the full sentence can be seen in the downstream tasks. MPNet uses masked and permuted language modeling to model the dependency among predicted tokens and see the position information of the full sentence \cite{DBLP:journals/corr/abs-2004-09297}.
+MPNET has been released by Microsoft in 2020. As visible from their blog post \cite{mpnet_blog_post},  researchers that developed MPNET, realized that two of the main pretraining tasks of transformers, masked language modeling adopted in BERT and permuted language modeling adopted in XLNet \ref{Yang2019XLNetGA} --- another transformer model presented by Google and Carnegie Mellon University researchers from which MPNET inherits ---, have different limitations. They came up with and approach that inherits the advantages of Masked language modeling (MLM) and Permuted language modeling (PLM) and avoids their limitations. MLM is proposed in BERT, which randomly masks some tokens with a masked symbol [M] and predicts the masked tokens given remaining tokens. PLM is proposed in XLNet, which randomly permutes a sequence and predicts the tokens in the right part (predicted part) in an autoregressive way. PLM can model the dependency among the predicted tokens with autoregressive prediction, but it cannot see the position information of the full sentence, which will cause mismatches between the pretraining and fine-tuning since the position information of the full sentence can be seen in the downstream tasks. MPNet uses masked and permuted language modeling to model the dependency among predicted tokens and see the position information of the full sentence \cite{DBLP:journals/corr/abs-2004-09297}.
 \paragraph{DistilBERT}
 DistilBERT has been released by HuggingFace engineers in 2019. They focused on the problem of growing model size and how to put in production such models. From the post on Huggingface blog \cite{distilbert_blog_post}, they used the \emph{distillation} technique to compress a large model into a smaller model.\\
 \textbf{Distillation}: Knowledge distillation (sometimes also referred to as teacher-student learning) is a compression technique in which a small model is trained to reproduce the behavior of a larger model (or an ensemble of models). It was introduced by Bucila et al. \cite{10.1145/1150402.1150464} and generalized by Hinton et al. \cite{hinton2015distilling} a few years later \cite{DBLP:journals/corr/abs-1910-01108}.
@@ -189,46 +185,31 @@ SentenceTransformers abstracts all the tokenization and averaging logics: given 
     \end{algorithm}
 \end{center}
 
-\subsection{Numerosity reduction} \todo[inline]{rivedere bene la parte sugli alberi}
-Working with long documents ends up in having very long sets of vectors: their dimension remains the same because every extraction is performed with the same model, but their numerosity may vary: a document with 10 sentences has 10 different vectors, and so on. Depending on the model used, these vectors may increase the memory size of the document in a consistent way. A mechanism of vector numerosity reduction: in this way it's possible to reduce the memory consumption sacrificing some informative content. The implemented algorithm inside the framework is a service that exploits cosine similarity in order to reduce the vector number: after computing the internal similarity of the cartesian product of all sentences inside a document, the minimum spanning tree is extracted as follows. Every sentence is considered a node in a fully connected graph and the minimum spanning tree defines the path to follow in order to find highly similar sentences: if two sentences are similar over a given threshold, the two vectors are merged reducing the numerosity. \\
-\textbf{Graph}:
-A graph is a diagram of vertices or nodes connected by edges and is visible in Figure \ref{fig:graph_example}.
-\begin{center}
-    \begin{figure}[H]
-    \centering
-    \includegraphics[scale=1]{images/methods/graph_example.png}
-    \caption{Graph example}
-    \label{fig:graph_example}
-\end{figure}
-\end{center}
-Numbered white circles constitute the set of nodes while the lines constitute the set of edges. Edges may have a value called weight \cite{Siu1998IntroductionTG}. \\
-\textbf{Fully connected graph}:
-A fully connected graph is a graph in which every node is connected to all other nodes \cite{Siu1998IntroductionTG} and is visible in Figure \ref{fig:fully_connected_graph_example}. 
-\begin{center}
-    \begin{figure}[H]
-    \centering
-    \includegraphics[scale=1]{images/methods/fully_connected_graph_example.png}
-    \caption{Fully connected graph example}
-    \label{fig:fully_connected_graph_example}
-\end{figure}
-\end{center}
+\subsection{Numerosity reduction}
+Working with long documents ends up in having very long sets of vectors: their dimension remains the same because every extraction is performed with the same model, but their numerosity may vary: a document with 10 sentences has 10 different vectors, and so on. Depending on the model used, these vectors may increase the memory size of the document in a consistent way. To tackle this problem, we proposed and implemented a technique of vector numerosity reduction: in this way it's possible to reduce the memory consumption sacrificing some informative content. The implemented algorithm inside the framework is a service that exploits cosine similarity in order to reduce the vector number: after computing the internal similarity of the cartesian product of all sentences inside a document, the minimum spanning tree is extracted as follows. Every sentence is considered a node in a fully connected graph, while the edges are weighted with the cosine similarity value between the two sentences. The minimum spanning tree defines the path to follow in order to find highly similar sentences: if two sentences are similar over a given threshold, the two vectors are merged reducing the numerosity. \\
+\textbf{Graph}: a graph is a diagram of vertices or nodes connected by edges \cite{Siu1998IntroductionTG}. \\
+\textbf{Fully connected graph}: a fully connected graph is a graph in which every node is connected to every other node \cite{Siu1998IntroductionTG}. \\
+\textbf{Tree}: a tree is a structure consisting of one node called the root and zero or more subtrees \cite{tree_definition}.
+
 \textbf{Matrix representation}: 
-Given a graph G with vertices labelled {1, 2, ..., $n$}, its \emph{adjacency matrix} A, visible in Figure \ref{adjacency_matrix_graph}, is a $n \times m$ matrix whose $ij$-th entry is the number of edges joining vertex i and vertex j. If, in addition, the edges are labelled {1, 2,... , $m$}, its \emph{incidence matrix} M, visible in Figure \ref{incidence_matrix_graph}, is the $n \times m$ matrix whose $ij$-th entry is 1 if vertex $i$ is incident to edge $j$, and 0 otherwise. If the edges have a weight, its \emph{weight matrix} W, visible in Figure \ref{weight_matrix_graph}, is the $n \times m$ matrix whose $ij$-th entry is the weight of the edge connecting vertex $i$ and vertex $j$.
+Given a graph G with vertices labelled {1, 2, ..., $n$}, its \emph{adjacency matrix} A, visible in Figure \ref{adjacency_matrix_graph}, is a $n \times n$ matrix whose $ij$-th entry is the number of edges joining vertex i and vertex j. If, in addition, the edges are labelled {01, 12, 23,... , $nm$}, its \emph{incidence matrix} M, visible in Figure \ref{incidence_matrix_graph}, is the $n \times m$ matrix whose $ij$-th entry is 1 if vertex $i$ is incident to edge $j$, and 0 otherwise. If the edges have a weight, its \emph{weight matrix} W, visible in Figure \ref{weight_matrix_graph}, is the $n \times n$ matrix whose $ij$-th entry is the weight of the edge connecting vertex $i$ and vertex $j$.
 \begin{figure}[H]
 \centering
-    \begin{tabular}{c c}
-        {$\displaystyle
+    \begin{tabular}{c c}{
+        $\displaystyle
             A = 
-            {\renewcommand{\arraystretch}{1.2}
-            \begin{bmatrix}
-                0 & 1 & 0 & 1\\
-                1 & 0 & 1 & 2\\
-                0 & 1 & 0 & 1\\
-                1 & 2 & 1 & 0
-            \end{bmatrix}}
+        \renewcommand{\kbldelim}{(}% Left delimiter
+        \renewcommand{\kbrdelim}{)}% Right delimiter
+        \kbordermatrix{
+            & 0 & 1 & 2 & 3 & \\
+            0 & 0 & 1 & 0 & 1 \\
+            1 & 1 & 0 & 1 & 0 \\
+            2 & 0 & 1 & 0 & 1 \\
+            3 & 1 & 0 & 1 & 0 \\
+          }
         $}
         &
-        $\vcenter{\hbox{\includegraphics[scale=0.65]{images/methods/fully_connected_graph_adjacency.png}}}$
+        $\vcenter{\hbox{\includegraphics[scale=0.55]{images/methods/fully_connected_graph_adjacency.png}}}$
     \end{tabular}
     \caption{Graph corresponding to adjacency matrix A}
     \label{adjacency_matrix_graph}
@@ -239,14 +220,15 @@ Given a graph G with vertices labelled {1, 2, ..., $n$}, its \emph{adjacency mat
     \begin{tabular}{c c}
         {$\displaystyle
             M = 
-            {\renewcommand{\arraystretch}{1.2}
-            \begin{bmatrix}
-                0 & 1 & 1 & 1\\
-                1 & 0 & 1 & 1\\
-                1 & 1 & 0 & 1\\
-                1 & 1 & 1 & 0
-            \end{bmatrix}}
-        $}
+        \renewcommand{\kbldelim}{(}% Left delimiter
+        \renewcommand{\kbrdelim}{)}% Right delimiter
+          \kbordermatrix{
+            & 01 & 12 & 23 & 30 & 02 & 13\\
+            0 & 1 & 0 & 0 & 1 & 1 & 0\\
+            1 & 1 & 1 & 0 & 0 & 0 & 1\\
+            2 & 0 & 1 & 1 & 0 & 1 & 0\\
+            3 & 0 & 0 & 1 & 1 & 0 & 1\\
+          }$}
         &
         $\vcenter{\hbox{\includegraphics[scale=0.65]{images/methods/fully_connected_graph_example.png}}}$
     \end{tabular}
@@ -257,15 +239,18 @@ Given a graph G with vertices labelled {1, 2, ..., $n$}, its \emph{adjacency mat
 \begin{figure}[H]
 \centering
     \begin{tabular}{c c}
-        {$\displaystyle
-            M = 
-            {\renewcommand{\arraystretch}{}
-            \begin{bmatrix}
-                0 & 0.20 & 0.60 & 0.40\\
-                0.20 & 0 & 0.25 & 0.35\\
-                0.60 & 0.25 & 0 & 0.15\\
-                0.40 & 0.35 & 0.15 & 0
-            \end{bmatrix}}
+        {
+        $\displaystyle
+            W = 
+        \renewcommand{\kbldelim}{(}% Left delimiter
+        \renewcommand{\kbrdelim}{)}% Right delimiter
+        \kbordermatrix{
+            & 0 & 1 & 2 & 3 & \\
+            0 & 0 & 0.2 & 0.60 & 0.40 \\
+            1 & 0.20 & 0 & 0.25 & 0.35 \\
+            2 & 0.60 & 0.25 & 0 & 0.15 \\
+            3 & 0.40 & 0.35 & 0.15 & 0 \\
+          }
         $}
         &
         $\vcenter{\hbox{\includegraphics[scale=0.65]{images/methods/fully_connected_graph_weighted.png}}}$
@@ -274,7 +259,7 @@ Given a graph G with vertices labelled {1, 2, ..., $n$}, its \emph{adjacency mat
     \label{weight_matrix_graph}
 \end{figure}
 
-\textbf{Minimum spanning tree}: An edge-weighted graph is a graph where we associate weights or costs with each edge. A minimum spanning tree (MST) \cite{books/daglib/0029345} of an edge-weighted graph is a spanning tree whose weight (the sum of the weights of its edges) is no larger than the weight of any other spanning tree. The pseudocode for numerosity reduction algorithm is visible in Algorithm \ref{alg_numerosity_reduction}.
+\textbf{Minimum spanning tree}: An edge-weighted graph is a graph where we associate weights or costs with each edge. The spanning tree of a graph (G) is a subset of G that covers all of its vertices using the minimum number of edges. A graph can have more than one spanning tree. A minimum spanning tree (MST) \cite{books/daglib/0029345} of an edge-weighted graph is a spanning tree whose weight (the sum of the weights of its edges) is no larger than the weight of any other spanning tree. The pseudocode for numerosity reduction algorithm is visible in Algorithm \ref{alg_numerosity_reduction}.
 \begin{center}
     \begin{figure}[h]
     \centering
@@ -339,10 +324,10 @@ The pseudocode is visible in Algorithm \ref{alg_scoring}.
     \end{algorithm}
 \end{center}
 
-\section{Evaluation} \todo[inline]{vedere scores e mandatory}
-After computing all necessary scores, in order to understand if the hyperparameters configuration works well it's mandatory to define an evaluation method. The evaluation method is mandatory in order to have a reliable set of hyperparameters. \\
+\section{Evaluation}
+After computing all necessary scores, in order to understand if the hyperparameters configuration works well it's essential to define an evaluation method. The evaluation method is mandatory in order to have a reliable set of hyperparameters. \\
 \subsection{Baseline dataset}
-In order to perform an evaluation the definition of a baseline dataset is mandatory. The baseline dataset used throughout the project is constituted by 10 query documents and each one has associated 10 search documents: of these 10 documents, 5 are adherent to the query and 5 are not adherent.
+In order to perform an evaluation, a baseline dataset must be defined. The baseline dataset used throughout the project is constituted by 10 query documents and each one has associated 10 search documents: of these 10 documents, 5 are adherent to the query and 5 are not adherent.
 \subsection{Evaluation method}
 To understand if the framework is working well, it has been decided to focus on two main aspects:
 \begin{enumerate}
@@ -351,6 +336,6 @@ To understand if the framework is working well, it has been decided to focus on 
 \end{enumerate}
 \subsubsection{Evaluation metrics}
 \paragraph{Precision@n} In order to understand how precise is the framework, it has been used an evaluation metric called \emph{precision}: recalling the structure of the baseline dataset, where there are 5 correct documents and 5 incorrect documents for each query, the computed scores are ordered in descending order: the number of correct placed documents (first half for adherent documents, second half for non adherent documents) denotes the precision for that given query. Precision denotes the proportion of predicted positive cases that are correctly Real Positives \cite{DBLP:journals/corr/abs-2010-16061}.\\
-As the name says, Precision@n is an evaluation metric computed on the $n$ corpus elements: for a given query the resulting measure is \emph{precision@10}, where 10 are the documents associated to the given query. For a given set of queries with mutually exclusive documents associated, the final result will be the sum of these precisions: for example, for 10 queries there will be a \emph{precision@100} score.
+As the name says, Precision@n is an evaluation metric computed on the $n$ corpus elements: for a given query the resulting measure is \emph{precision@10}, where 10 are the documents associated to the given query. For a given set of queries with two groups of mutually exclusive documents associated (\emph{related}, \emph{not related}), the final result will be the sum of these precisions: for example, for 10 queries there will be a \emph{precision@100} score.
 \paragraph{Difference mean/median} The other aspect which deserves particular attention is the difference between right and wrong documents. In order to have a reliable framework, it's necessary not only that it assigns right documents to right queries, it would be better if it could be able to strongly differentiate right documents from wrong ones. In order to measure this metric, the system performs the mean of median of similarity scores assigned to right documents in baseline and computes the difference with the mean or median form wrong ones: the higher the difference, the better the result. An high score for these metrics would mean that the system can well recognize right documents, resulting in a more reliable result. 
 \end{document}

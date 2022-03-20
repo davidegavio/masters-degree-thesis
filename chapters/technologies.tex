@@ -145,12 +145,11 @@ A residual connection followed by layer normalization is employed around each su
 The decoder from Vaswani's research \cite{vaswani2017attention} is composed of a stack of $N=6$ identical layers. The decoder inserts a third sub-layer to the two encoder sub-layer. This sub-layer performs multi-head attention over the output of the encoder stack. The idea behind multi-head attention is to allow the attention function to extract information from different representation subspaces, which would, otherwise, not be possible with a single attention head. Similarly to the encoder, around each of the sub-layers are employed residual connections followed by layer normalization. This kind of masking combined the output embeddings, that are offset by one position, ensures that the predictions for position $i$ can depend only on the known outputs at positions less than $i$. All sub-layers in the model produce an output of dimension $d_{model} = 512$.
 
 \subsection{Attention}
-\todo[inline]{rispiegare bene le formule}
 An attention function consists in mapping a query and a set of key-value pairs to an output, where the query, keys, values and output are all vectors. The output is computed as a weighted sum of the values, with weights computed by a compatibility function of the query with the corresponding key.
 \subsubsection{Scaled dot-product attention} 
 The input consists of queries and keys of dimension $d_k$, and values of dimension $d_v$.
-To obtain the weights on the values, the dot product of the query with all keys is performed, dividing each by $\sqrt{d_k}$ and applying a softmax function. The queries, values and keys sets are packed together into Q (queries), K (keys) and V (values) sets. 
-The attention function is computed using Q, K and V matrices, producing an output matrix in this way:
+To obtain the weights on the values, the dot product of the query with all keys is performed, dividing each by $\sqrt{d_k}$ and applying a softmax function. The queries, values and keys sets are packed together into $Q$ (queries), $K$ (keys) and $V$ (values) matrices. 
+The attention function is computed using $Q$, $K^T$ ($K$ transposed) and $V$ matrices, producing an output matrix in this way:
 \begin{center}
     $Attention(Q, K, V) = softmax(\frac{QK^T}{\sqrt{d_k}})V$
 \end{center}
@@ -162,8 +161,8 @@ Scaled dot-product attention is both faster and more space efficient of two comm
     \label{fig:scaled_dot-product_attention}
 \end{figure}
 \subsubsection{Multi-head attention}
-As visible in Figure \ref{fig:multi-head_attention}, queries, values and keys are linearly projected $h$ times, with different learned linear projections to $d_k$, $d_q$ and $d_v$ dimensions respectively. The attention function is performed in parallel on each projection, yielding $d_v$-dimensional output values. These are concatenated and once again projected, resulting in the final values. \\
-Multi-head attention allows the model to jointly attend to information form different representation subspaces at different positions. 
+As visible in Figure \ref{fig:multi-head_attention}, queries, values and keys are linearly projected $h$ times, with different learned linear projections to $d_k$, $d_q$ and $d_v$ dimensions respectively. The attention function is performed in parallel on each projection, yielding \mbox{$d_v$-dimensional} output values. These are concatenated and once again projected, resulting in the final values. \\
+Multi-head attention allows the model to jointly participate to information from different representation subspaces at different positions. 
 \begin{center}
     $\mathrm{MultiHead}(Q, V, K) =\mathrm{Concat}(head_1, \dots, head_h)W^O$\\
     where $head_i = Attention(QW^Q_i, KW^K_i, VW^V_i)$

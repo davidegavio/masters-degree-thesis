@@ -39,8 +39,7 @@
 \chapter{Architecture}
 
 \section{Software architecture}
-\todo[inline]{spiegare meglio architettura software}
-A \emph{software architecture} is a set of architectural elements that have a particular form \cite{Perry1992FoundationsFT}. There are three different classes of architectural elements: 
+A \emph{software architecture} is the defining and structuring of a solution that meets technical and operational requirements. Software architecture optimizes attributes involving a series of decisions, such as security, performance and manageability. These decisions ultimately impact application quality, maintenance, performance and overall success. \cite{Perry1992FoundationsFT}. There are three different classes of architectural elements: 
 \begin{enumerate}
     \item \textbf{Processing elements}: elements that supply the transformation on data elements;
     \item \textbf{Data elements}: elements that contain the information that is used and transformed;
@@ -65,15 +64,14 @@ A service:
 \end{enumerate}
 
 \section{Project architecture}
-The implemented architecture follows the idea of SOA. It's based on a series of services that read the input from the data lake and write the result on the data lake. The final result is a pipeline of services, executed one after the other.
-\todo[inline]{mettere a posto immagine}
+The implemented architecture follows the idea of SOA. It's based on a series of services that read the input and write the result on the data lake. The final result is a pipeline of services, executed one after the other.
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.75]{images/architecture/architecture_service_example.png}
+    \includegraphics[width=\textwidth]{images/architecture/architecture_service_example.png}
     \caption{Architecture example}
     \label{fig:architecture_example}
 \end{figure}
-Every service executed is a transaction, if there is an error in the execution there's no update in written data. Reading and writing to disk is the most efficient approach, because it avoids to break the memory managing big datasets. \todo[inline]{controlalre questa cosa}Using Python, time complexity scales linearly adding cluster nodes: for example, if a computation takes 30 minutes with 5 nodes, it takes 15 minutes with 10 nodes. 
+Every service executed is a transaction, if there is an error in the execution there's no update in written data. Reading and writing to disk is the most efficient approach, because it avoids to break the memory managing big datasets. 
 
 \subsection{Categories of services}
 In the implemented framework there are two main categories of services.
@@ -86,14 +84,13 @@ In the implemented framework there are two main categories of services.
 
 \subsection{DAG}
 Once defined the services that need to be executed, these make up a so called Direct Acyclical Graph of execution: it consists of a pipeline where the result of a service execution is the input for the subsequent service. Ideally, the correct form of the DAG is visible in Figure \ref{fig:dag_example}:
-\todo[inline]{mettere a posto immagine}
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.5]{images/architecture/dag_theory.png}
+    \includegraphics[scale=.68]{images/architecture/dag_theory.png}
     \caption{DAG example}
     \label{fig:dag_example}
 \end{figure}
-The two phases (\emph{preprocessing} and \emph{processing}) are subsequent and linked. If anything breaks the pipeline, the dataset will be updated to the last written result, allowing to restart from that checkpoint and not recomputing from the beginning, saving up precious machine-time.
+The two phases (\emph{preprocessing} and \emph{processing}), as visible in Figure \ref{fig:dag_example}, are subsequent and linked. If anything breaks the pipeline, the dataset will be updated to the last written result, allowing to restart from that checkpoint and not recomputing from the beginning, saving up precious machine-time.
 \subsection{Orchestrator}
 An orchestrator is a module of a framework which has the task of managing the execution of other modules in order to guarantee the right pipeline execution. The orchestrator reads a series of messages that parametrize different services, than executes the associated services passing read messages as service input. Every message is a correctly formatted JSON object which contains all values that are necessary. An example of parameter message is visible in Listing \ref{parameter_message}:
 \\

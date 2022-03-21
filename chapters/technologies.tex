@@ -38,18 +38,29 @@ Examples of DFS are:
     \item Hadoop Distributed File System (\emph{HDFS}) \cite{Shvachko2010TheHD}, an open-source DFS used with Hadoop;
     \item Colossus \cite{10.1145/2491245}, an improved version of GFS.
 \end{enumerate}
-\paragraph{Architecture} HDFS relies on a \emph{master-slave} architecture composed by a master server, the \emph{NameNode}, and from several slave server, the \emph{DataNodes}, generally one per node in the cluster. The NameNode manages the file system namespace and regulates access to files by clients. Each DataNode manages storage attached to the nodes that they run on. In Figure \ref{fig:hdfs_architecture}, is visible a simple schema of HDFS architecture.
+\subsection{Hadoop}
+Hadoop is an open source framework overseen by Apache Software Foundation which is written in Java for storing and processing of huge datasets with the cluster of commodity hardware.
+\subsubsection{History}
+Hadoop was created by Doug Cutting and Mike Cafarella in 2005. It was originally developed to support distribution for the Nutch search engine project. Apache Nutch project was the process of building a search engine system that can index 1 billion pages. After a lot of research on Nutch, Cutting and Cafarella concluded that such a system will cost around half a million dollars in hardware, and along with a monthly running cost of \$30000 approximately. \\
+In 2003 Google solved half of their problem: releasing a paper about GFS \cite{GhemawatSanjay2003TheGF}, supplying a solution for the problem of storing very large files which were being generated because of web crawling and indexing processes. \\
+In 2004 Google again released a paper about a distributed computation engine called MapReduce \cite{Dean2004MapReduceSD}, which was the solution of processing those large datasets. Cutting and Cafarella started implementing Google’s techniques (GFS and MapReduce) as open-source in the Apache Nutch project. 
+In 2006, while working at Yahoo!, he separated the distributed computing parts from Nutch and formed a new project Hadoop with a large team of engineers working on this project. \\
+In 2008, Yahoo! released Hadoop as an open source project to ASF(Apache Software Foundation). And in July of 2008, Apache Software Foundation successfully tested a 4000 node cluster with Hadoop. \\
+In 2009, Hadoop was successfully tested to sort a PB (PetaByte) of data in less than 17 hours for handling billions of searches and indexing millions of web pages. \\
+In December of 2011, Apache Software Foundation released Apache Hadoop version 1.0. \\
+And currently, there is Apache Hadoop version 3.3.x which released in June 2021.
+\subsubsection{Architecture} HDFS relies on a \emph{master-slave} architecture composed by a master server, the \emph{NameNode}, and from several slave server, the \emph{DataNodes}, generally one per node in the cluster. The NameNode manages the file system namespace and regulates access to files by clients. Each DataNode manages storage attached to the nodes that they run on. In Figure \ref{fig:hdfs_architecture}, is visible a simple schema of HDFS architecture.
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.35]{images/cluster_computing/hdfs_architecture.png}
+    \includegraphics[scale=.5]{images/cluster_computing/hdfs_architecture.png}
     \caption{HDFS  architecture}
     \label{fig:hdfs_architecture}
 \end{figure}
 
-\textbf{Rack awareness}: HDFS stores replicated datablocks in at least two different racks in order to improve data availability, reliability and network bandwidth utilization. If the so called replication factor is three, a block is replicated on the local rack and two more replicas are placed in a same remote rack. This allows data recovery in case of connection loss among nodes. The inability to reach a rack (e.g. network problems) doesn't cause a big data loss because data are replicated over different racks, so lost blocks are read from the remaining rack and replicated again in order to guarantee availability, reliability and network bandwidth utilization. In Figure \ref{fig:racks_dfs} is visible the rack organization of a DFS.
+\paragraph{Rack awareness} HDFS stores replicated datablocks in at least two different racks in order to improve data availability, reliability and network bandwidth utilization. If the so called replication factor is three, a block is replicated on the local rack and two more replicas are placed in a same remote rack. This allows data recovery in case of connection loss among nodes. The inability to reach a rack (e.g. network problems) doesn't cause a big data loss because data are replicated over different racks, so lost blocks are read from the remaining rack and replicated again in order to guarantee availability, reliability and network bandwidth utilization. In Figure \ref{fig:racks_dfs} is visible the rack organization of a DFS.
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=.5]{images/cluster_computing/racks_dfs.png}
+    \includegraphics[scale=.6]{images/cluster_computing/racks_dfs.png}
     \caption{HDFS rack architecture}
     \label{fig:racks_dfs}
 \end{figure}
@@ -145,7 +156,7 @@ A residual connection followed by layer normalization is employed around each su
 The decoder from Vaswani's research \cite{vaswani2017attention} is composed of a stack of $N=6$ identical layers. The decoder inserts a third sub-layer to the two encoder sub-layer. This sub-layer performs multi-head attention over the output of the encoder stack. The idea behind multi-head attention is to allow the attention function to extract information from different representation subspaces, which would, otherwise, not be possible with a single attention head. Similarly to the encoder, around each of the sub-layers are employed residual connections followed by layer normalization. This kind of masking combined the output embeddings, that are offset by one position, ensures that the predictions for position $i$ can depend only on the known outputs at positions less than $i$. All sub-layers in the model produce an output of dimension $d_{model} = 512$.
 
 \subsection{Attention}
-An attention function consists in mapping a query and a set of key-value pairs to an output, where the query, keys, values and output are all vectors. The output is computed as a weighted sum of the values, with weights computed by a compatibility function of the query with the corresponding key.
+An attention function consists in mapping a query and a set of key-value pairs to an output, where the query, keys, values and output are all term vectors. The main purpose of attention is to estimate the relative importance of the keys term compared to the query term related to the same person or concept. To that end, the attention mechanism takes query $Q$ that represents a vector word, the keys $K$ which are all other words in the sentence, and value $V$ represents the vector of the word. The output is computed as a weighted sum of the values, with weights computed by a compatibility function of the query with the corresponding key.
 \subsubsection{Scaled dot-product attention} 
 The input consists of queries and keys of dimension $d_k$, and values of dimension $d_v$.
 To obtain the weights on the values, the dot product of the query with all keys is performed, dividing each by $\sqrt{d_k}$ and applying a softmax function. The queries, values and keys sets are packed together into $Q$ (queries), $K$ (keys) and $V$ (values) matrices. 

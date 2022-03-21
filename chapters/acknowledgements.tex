@@ -1,7 +1,13 @@
 \providecommand{\main}{..}
 \documentclass[\main/main.tex]{subfiles}
+\newcommand\invisiblechapter[1]{%
+  \refstepcounter{chapter}%
+  \addcontentsline{toc}{chapter}{\protect\numberline{\thechapter}#1}%
+  \sectionmark{#1}}
+
 \begin{document}
-\chapter*{Acknowledgements}
+
+\invisiblechapter{Acknowledgments}
 \begin{flushright}
 \emph{An heartfelt thanks:\\
 to Professors Malchiodi and Condorelli, \\

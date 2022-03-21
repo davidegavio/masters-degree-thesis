@@ -45,9 +45,9 @@ As said in Chapter 3, this is the phase where the dataset is elaborated in order
 \subsection{Cleaning}
 Given a textual dataset, cleaning service performs all the operations needed to have cleaned and well formed documents.
 \subsubsection{HTML cleaning}
-The first (parametrized) step is to remove all HTML special characters. This operation is preparatory for next phases that need to deal with human-readable texts. The pseudocode of HTML removal phase is visible in Algorithm \ref{alg_html_removal}.
+The first (parametrized) step is to remove all HTML special characters. This operation is preparatory for next phases that need to deal with human-readable texts. The pseudocode of HTML removal phase is visible in Algorithm \ref{alg_html_removal}. This service is based on Python HTML class \cite{html_parser}, which allows to parse textual files filled with HTML special characters and tags.
 \begin{center}
-    \begin{algorithm}[ht]
+    \begin{algorithm}[H]
      \KwData{Textual dataset}
      \KwResult{Cleaned texts}
      initialization \\
@@ -60,11 +60,11 @@ The first (parametrized) step is to remove all HTML special characters. This ope
      \label{alg_html_removal}
     \end{algorithm}
 \end{center}
-This service is based on Python HTML class \cite{html_parser}, which allows to parse textual files filled with HTML special characters and tags.
+
 \subsubsection{Sentence splitting}
 This is the first step to overcome transformer technology limitations: in order to not increase to much memory usage, transformers libraries set a maximum of tokens that the model is able to manage. Therefore, long texts are difficult to manage as a whole, so they need to be divided in sentences (splits). In \mbox{Algorithm \ref{alg_split}} is visible the pseudocode for splitting phase.
 \begin{center}
-    \begin{algorithm}[ht]
+    \begin{algorithm}[H]
      \KwData{Cleaned dataset}
      \KwResult{Splitted texts}
      initialization \\
@@ -122,7 +122,7 @@ The final step of cleaning service is split filtering. In this phase, splits tha
 \end{center}
 
 \subsection{Filtering}
-In some applications, it is needed to reduce the number of records inside a dataset. In the implemented framework this is performed using the filtering service. Reading a list of keys which has to be kept, this service is able to filter out those keys that aren't part of the list mentioned earlier. Algorithms \ref{alg_filtering} shows how two datasets are joined in order to filter the bigger one. This operation is simply an inner join between two datasets resulting in a smaller dataset due to the filter one.
+In some applications, it is needed to reduce the number of records inside a dataset. In the implemented framework this is performed using the filtering service. Reading a list of keys which has to be kept, this service is able to filter out those keys that aren't part of the list mentioned earlier. Algorithm \ref{alg_filtering} shows how two datasets are joined in order to filter the bigger one. This operation is simply an inner join between two datasets resulting in a smaller dataset due to the filter one.
 \begin{center}
     \begin{algorithm}[H]
      \KwData{Cleaned dataset}

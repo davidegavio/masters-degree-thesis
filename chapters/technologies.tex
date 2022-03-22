@@ -48,16 +48,32 @@ In 2006, while working at Yahoo!, he separated the distributed computing parts f
 In 2008, Yahoo! released Hadoop as an open source project to ASF(Apache Software Foundation). And in July of 2008, Apache Software Foundation successfully tested a 4000 node cluster with Hadoop. \\
 In 2009, Hadoop was successfully tested to sort a PB (PetaByte) of data in less than 17 hours for handling billions of searches and indexing millions of web pages. \\
 In December of 2011, Apache Software Foundation released Apache Hadoop version 1.0. \\
-And currently, there is Apache Hadoop version 3.3.x which released in June 2021.
-\subsubsection{Architecture} HDFS relies on a \emph{master-slave} architecture composed by a master server, the \emph{NameNode}, and from several slave server, the \emph{DataNodes}, generally one per node in the cluster. The NameNode manages the file system namespace and regulates access to files by clients. Each DataNode manages storage attached to the nodes that they run on. In Figure \ref{fig:hdfs_architecture}, is visible a simple schema of HDFS architecture.
+Currently, there is Apache Hadoop version 3.3.x which released in June 2021 \cite{hadoop_history}.
+\subsubsection{Architecture} Apache Hadoop is a framework for running applications on large clusters built of commodity hardware. The Hadoop framework transparently provides applications for both reliability and data motion. Hadoop implements a computational paradigm named MapReduce, where the application is divided into many small fragments of work, each of which may be executed or re-executed on any node in the cluster. MapReduce works on YARN (Yet Another Resource Negotiator), which performs 2 operations that are Job scheduling and Resource Management. The Purpose of Job scheduler is to divide a big task into small jobs so that each job can be assigned to various slaves in a Hadoop cluster and Processing can be Maximized. Job Scheduler also keeps track of which job is important, which job has more priority, dependencies between the jobs and all the other information like job timing, \dots And the use of Resource Manager is to manage all the resources that are made available for running a Hadoop cluster.  In addition, it provides a distributed file system (HDFS) that stores data on the compute nodes, providing very high aggregate bandwidth across the cluster. Both MapReduce and the Hadoop Distributed File System are designed so that node failures are automatically handled by the framework \cite{hadoop} \cite{hadoop_arch}.
+
+\subsection{HDFS}
+HDFS relies on a \emph{master-slave} architecture composed by a master server, the \emph{NameNode}, and from several slave server, the \emph{DataNodes}, generally one per node in the cluster. The NameNode manages the file system namespace and regulates access to files by clients. Each DataNode manages storage attached to the nodes that they run on. In Figure \ref{fig:hdfs_architecture}, is visible a simple schema of HDFS architecture.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=.5]{images/cluster_computing/hdfs_architecture.png}
     \caption{HDFS  architecture}
     \label{fig:hdfs_architecture}
 \end{figure}
+\subsubsection{HDFS Blocks} 
+HDFS breaks down a file into smaller units. Each of these units is stored on different machines in the cluster. This, however, is transparent to the user working on HDFS. To them, it seems like storing all the data onto a single machine. These smaller units are the blocks in HDFS.
+\subsubsection{HDFS NameNode}
+NameNode is the master node that runs on a separate node in the cluster.
+Manages the filesystem namespace which is the filesystem tree or hierarchy of the files and directories.
+Stores information like owners of files, file permissions, \dots for all the files.
+It is also aware of the locations of all the blocks of a file and their size.
+All this information is maintained persistently over the local disk in the form of two files: Fsimage and Edit Log.
+Fsimage stores the information about the files and directories in the filesystem. For files, it stores the replication level, modification and access times, access permissions, blocks the file is made up of, and their sizes. For directories, it stores the modification time and permissions.
+Edit log on the other hand keeps track of all the write operations that the client performs. This is regularly updated to the in-memory metadata to serve the read requests.
+Whenever a client wants to write information to HDFS or read information from HDFS, it connects with the NameNode. The NameNode returns the location of the blocks to the client and the operation is carried out.
+\subsubsection{HDFS DataNode}
+DataNode are the worker nodes. They are inexpensive commodity hardware that can be easily added to the cluster. Datanodes are responsible for storing, retrieving, replicating, deletion, \dots of blocks when asked by the NameNode. They periodically send heartbeats to the NameNode so that it is aware of their health. With that, a DataNode also sends a list of blocks that are stored on it so that the NameNode can maintain the mapping of blocks to DataNodes in its memory.
 
-\paragraph{Rack awareness} HDFS stores replicated datablocks in at least two different racks in order to improve data availability, reliability and network bandwidth utilization. If the so called replication factor is three, a block is replicated on the local rack and two more replicas are placed in a same remote rack. This allows data recovery in case of connection loss among nodes. The inability to reach a rack (e.g. network problems) doesn't cause a big data loss because data are replicated over different racks, so lost blocks are read from the remaining rack and replicated again in order to guarantee availability, reliability and network bandwidth utilization. In Figure \ref{fig:racks_dfs} is visible the rack organization of a DFS.
+\subsubsection{Rack awareness} HDFS stores replicated datablocks in at least two different racks in order to improve data availability, reliability and network bandwidth utilization. If the so called replication factor is three, a block is replicated on the local rack and two more replicas are placed in a same remote rack. This allows data recovery in case of connection loss among nodes. The inability to reach a rack (e.g. network problems) doesn't cause a big data loss because data are replicated over different racks, so lost blocks are read from the remaining rack and replicated again in order to guarantee availability, reliability and network bandwidth utilization. In Figure \ref{fig:racks_dfs} is visible the rack organization of a DFS.
 \begin{figure}[H]
     \centering
     \includegraphics[scale=.6]{images/cluster_computing/racks_dfs.png}
@@ -98,9 +114,16 @@ A Reduce task takes as input a pair of key, list of values associated to that ke
     \item If a Map worker fails, all its tasks (even completed), are rescheduled to other workers to complete them eventually;
     \item If a Reduce worker fails, its Reduce tasks will be put to idle status and rescheduled on another Reduce worker.
 \end{enumerate}
+\subsubsection{Execution management}
+The MapReduce framework consists of a single master JobTracker and one slave TaskTracker per cluster-node. The work of JobTracker is to manage all the resources and all the jobs across the cluster and also to schedule each map on the TaskTracker running on the same DataNode since there can be hundreds of DataNodes available in the cluster. The TaskTracker can be considered as the actual slaves that are working on the instruction given by the JobTracker. This TaskTracker is deployed on each of the nodes available in the cluster that executes the Map and Reduce task as instructed by JobTracker.
 \subsection{Spark}
-\paragraph{Workflow systems}Workflow systems extend MapReduce from the simple two-step workflow (the Map function feeds the Reduce function) to any collection of functions, with an acyclic graph representing workflow among the functions. That is, there is an acyclic flow graph whose arcs $a$ → $b$ represent the fact that function $a$’s output is an input to function $b$ \cite{leskovec_rajaraman_ullman_2020}.
-\paragraph{RDD} Spark is based on Resilient Distributed Datasets (RDD), which is a collection of elements partitioned across the nodes of the cluster that can be operated on in parallel. An RDD is distributed because it can be split into chunks and held at different compute nodes. They're resilient because it's expected that they can be recovered in case of partial or total loss. An RDD can contain elements of any kind, without restrictions.
+Apache Spark is a unified analytics engine for large-scale data processing. It provides high-level APIs in Java, Scala, Python and R, and an optimized engine that supports general execution graphs. It also supports a rich set of higher-level tools including Spark SQL for SQL and structured data processing, MLlib for machine learning, GraphX for graph processing, and Structured Streaming for incremental computation and stream processing \cite{spark}.
+\paragraph{Workflow systems} Workflow systems extend MapReduce from the simple two-step workflow (the Map function feeds the Reduce function) to any collection of functions, with an acyclic graph representing workflow among the functions. That is, there is an acyclic flow graph whose arcs $a$ → $b$ represent the fact that function $a$’s output is an input to function $b$ \cite{leskovec_rajaraman_ullman_2020}.
+\subsubsection{Data structures}
+\paragraph{RDD} Spark is based on Resilient Distributed Datasets (RDD), which is a collection of elements partitioned across the nodes of the cluster that can be operated on in parallel. An RDD is distributed because it can be split into chunks and held at different compute nodes. They're resilient because it's expected that they can be recovered in case of partial or total loss. An RDD can contain elements of any kind, without restrictions \cite{rdd}.
+\paragraph{Dataset} A combination of DataFrame and RDD. It provides the typed interface that is available in RDDs while providing the convenience of the DataFrame. The Dataset API is available in the Java and Scala languages \cite{dataset}.
+\paragraph{Dataframe} A DataFrame is a Dataset organized into named columns. It is conceptually equivalent to a table in a relational database or a data frame in R/Python, but with richer optimizations under the hood \cite{dataframe}.
+\subsubsection{Operations}
 Operations in Spark are:
 \begin{enumerate}
     \item Transformations: operations applied to an RDD that produce another RDD;
@@ -125,6 +148,15 @@ The first difference from other MapReduce implementations, is that Spark is lazy
 \paragraph{Resilience of RDDs}
 Performing operations on RDDs creates a \emph{lineage} of those RDDs, so that in case of failure Spark is able to recreate the RDD (or just a split) looking at its lineage.
 \newpage
+\subsubsection{Other Spark components}
+Apart from Spark \emph{core} components, the engine has several other parts important depending on the application scope.
+\paragraph{Spark SQL} Spark SQL lets you query structured data inside Spark programs, using SQL. SQL provide a common way to access a variety of data sources, including Hive, Parquet, JSON, \dots.
+\paragraph{MLlib} Apache Spark provides a general machine learning library — MLlib — that is designed for simplicity, scalability, and easy integration with other tools. The key benefit of MLlib is that it allows data scientists to focus on their data problems and models instead of solving the complexities surrounding distributed data (such as infrastructure, configurations, and so on). The data engineers can focus on distributed systems engineering using Spark’s easy-to-use APIs, while the data scientists can leverage the scale and speed of Spark core. Spark MLlib is a general-purpose library, providing algorithms for most use cases.
+\paragraph{ML Pipelines} When running machine learning algorithms, it involves a sequence of tasks including pre-processing, feature extraction, model fitting, and validation stages. The ML Pipelines is a High-Level API for MLlib that allow the user to execute a sequence of operations, like the ones named before, as a stage of a sequence. This sequence is called \emph{pipeline} and is executed as a whole.
+\paragraph{GraphX} GraphX is a component in Spark for graphs and graph-parallel computation. It extends RDDs and exposes a set of operators on graphs (aggregations, joins, structural, property, \dots).
+\paragraph{Spark Streaming} Spark Streaming is an extension of the core Spark API that allows data engineers and data scientists to process real-time data from various sources including Kafka, Flume, \dots. This processed data can be pushed out to filesystems, databases, and live dashboards. Extending RDDs, Spark Streaming can be used with any other Spark components like MLlib, Spark SQL, \dots
+\subsubsection{Spark on Hadoop}
+
 
 \section{Transformers}
 Until massive adoption of transformer technology, the dominant sequence transduction models were based on complex recurrent or convolutional neural networks that include an encoder and a decoder.

@@ -137,6 +137,7 @@ Using a different combination of hyperparameters for each execution led to a ser
 In Table \ref{tab:model_name_model_label} is visible the association between model label, model name and result entry in Tables \ref{tab:experimental_results_complete} and \ref{tab:experimental_results_best}. For readability reasons, each model name has been converted to a shorter and more readable label.
 \begin{table}[H]
     \centering
+    \resizebox{\textwidth}{!}{
     \begin{tabular}{| c | c | c |}
         \hline
         Label & Model & Table entry\\ 
@@ -148,21 +149,58 @@ In Table \ref{tab:model_name_model_label} is visible the association between mod
         DistilbertBaseMultilingualCased & distilbert-base-multilingual-cased & Distilbert     \\ 
         \hline
     \end{tabular}
+    }
     \caption{Model name - Model label - Table entry correspondence}
     \label{tab:model_name_model_label}
 \end{table}
 
 \subsection{Result discussion}
 In this subsection there is a discussion about some important aspects of the results that have emerged by our experiments. \\
-The first important aspect that emerges from performed experiments is that models trained using two specific datasets achieve better results overall than other models. As visible from Table \ref{tab:experimental_results_complete}, using models trained using a set of sentence pairs with a similarity score, like \emph{stsb-mpnet-base-v2} (Mpnet), and models trained using paraphrase datasets, like \emph{paraphrase-albert-base-v2} (PAlbert), show better result overall than other generic models and are visible in Table \ref{tab:experimental_results_best}. Those models show a very good result for \emph{Precision@100}, which measures the percentage of right positioned documents in relation to the input query, meaning that the framework is able to assign right documents to right queries, but it's interesting to notice also that they can separate quite well right documents form wrong ones, as visible looking at \emph{Difference mean}, which measures the difference between the mean of correlated documents and not related documents, and \emph{Difference median} metrics, which measures the difference between the median similarity score of correlated documents and not related documents. Median proves to be a better voting technique then mean due to its greater robustness to outliers.\\
-Secondly, the implemented numerosity reduction shows a result conservation useful if memory usage is a concern: reducing space occupation and maintaining similar result is considerable as an achievement. The first line of Table \ref{tab:experimental_results_complete}, which is the best result achieved, shows how a 10\% reduction of the number of sentences in the corpus doesn't influence the final result. When dealing with big data this could become useful to reduce space and memory occupation. Obviously, this approach works well on a dataset built like the one used during the project, it needs further tests to see how it behaves on differently built datasets.\\
-Thirdly, Table \ref{tab:experimental_results_complete} show that for the project scope is generally better to use a monolingual model (in our case English) instead of using a multilingual one.\\
-Fourthly, Table \ref{tab:experimental_results_complete} show that for the project scope is generally better to use median as voting technique (Chapter 4) in order to compute the final result, as it output the best results. \\
-Lastly, not furtherly specialized models like \emph{albert-base-v2} (AlbertBaseV2) and \emph{distilbert-base-multilingual-cased} (DistilbertBaseMultilingualCased) show worse results than others. In the project scope, is demonstrated that using those models doesn't reach good enough performances, emphasizing even more the concept that the model choice is crucial for a system like the one presented in this document and that the choice operation needs a big attention in order to make the best choice. \\
-
+The first important aspect that emerges from performed experiments is that models trained using two specific datasets achieve better results overall than other models. As visible from Table \ref{tab:experimental_results_complete}, using models trained using a set of sentence pairs with a similarity score, like \emph{stsb-mpnet-base-v2} (Mpnet), and models trained using paraphrase datasets, like \emph{paraphrase-albert-base-v2} (PAlbert), show better result overall than other generic models and are visible in Table \ref{tab:experimental_results_best}. Those models show a very good result for \emph{Precision@100}, which measures the percentage of right positioned documents in relation to the input query, meaning that the framework is able to assign right documents to right queries, but it's interesting to notice also that they can separate quite well right documents form wrong ones, as visible looking at \emph{Difference mean}, which measures the difference between the mean of correlated documents and not related documents, and \emph{Difference median} metrics, which measures the difference between the median similarity score of correlated documents and not related documents. Median proves to be a better voting technique then mean due to its greater robustness to outliers.
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{||c|c|c|c|c|c||}
+\hline
+Model & P@100 & Diff mean & Diff median & Red ratio \% & Voting tech \\
+\hline\hline
+Mpnet       & 0,88 & 0,13  & 0,12 & 9,88  & median \\
+PAlbert     & 0,86 & 0,1   & 0,11 & 6,52  & median \\
+Mpnet       & 0,86 & 0,12  & 0,12 & 11,49 & median \\
+PAlbert     & 0,84 & 0,1   & 0,1  & 2,63  & median \\
+PAlbert     & 0,84 & 0,09  & 0,1  & 10,87 & mean \\
+Mpnet       & 0,84 & 0,12  & 0,12 & 15,72 & mean \\
+\hline
+\end{tabular}
+}
+\caption{Best results table}
+\label{tab:experimental_results_best}
+\end{table}
+Secondly, the implemented numerosity reduction shows a result conservation useful if cluster usage is a concern: reducing space occupation and maintaining similar result is considerable as an achievement. The first line of Table \ref{tab:experimental_results_complete}, which is the best result achieved, shows how a 10\% reduction of the number of sentences in the corpus doesn't influence the final result while using a reduction threshold of 0.4. Recalling Chapter 4, \emph{Red \%} visible in Tables \ref{tab:experimental_results_best} \ref{tab:result_conservation} and \ref{tab:experimental_results_complete} is the threshold used in the numerosity reduction phase. Table \ref{tab:result_conservation} highlights this phenomena and shows that these models, in the scope of the project, don't face a result degradation when the number of sentences is reduced. When dealing with big data this could become useful to reduce disk and memory occupation, resulting in shorter read and write times. Moreover, working on a smaller dataset tend to reduce computational time, which may be very costly depending on the cluster setting. Obviously, this approach works well on a dataset built like the one used during the project, it needs further tests to see how it behaves on differently built datasets. 
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{||c|c|c|c|c|c|c||}
+\hline
+Model & P@100 & Diff mean & Diff median & Red ratio \% & Voting tech & Red \% \\
+\hline\hline
+ Mpnet      & 0,88 & 0,13  & 0,12 & 9,88  & median & 0,4 \\
+ Mpnet      & 0,88 & 0,13  & 0,13 & 0     & median & 0   \\
+ PAlbert    & 0,86 & 0,1   & 0,11 & 6,52  & median & 0,4 \\
+ PAlbert    & 0,86 & 0,1   & 0,11 & 0     & median & 0   \\
+\hline
+\end{tabular}
+}
+\caption{Result conservation}
+\label{tab:result_conservation}
+\end{table}
+Thirdly, Table \ref{tab:experimental_results_complete} show that for the project scope is generally better to use a monolingual model (in our case English) instead of using a multilingual one. This happens because retraining a model like BERT, ALBERT, \dots is very demanding and usually is performed by big companies (Google, Facebook, \dots) or universities (University of Darmstadt, University of Massachusetts, \dots) leading to the majority of models being specialized on English. To emphasize this, going on Huggingface website \cite{huggingface_models} is visible that for the task of semantic similarity there are 383 models while just 1 Italian, 9 French, 3 German, \dots \\
+Fourthly, Table \ref{tab:experimental_results_complete} show that for the project scope is generally better to use median as voting technique (Chapter 4) in order to compute the final result, as it output the best results. This happens due to the median higher robustness to outliers when compared to the mean: the reason for this is that the mean can be dragged up or down by extreme values, but since the median is just the middle value in a distribution, it is not influenced by the outliers.\\
+Lastly, not furtherly specialized models like \emph{albert-base-v2} (AlbertBaseV2) and \emph{distilbert-base-multilingual-cased} (DistilbertBaseMultilingualCased) show worse results than others. In the project scope, is demonstrated that using those models doesn't reach good enough performances, emphasizing even more the concept that the model choice is crucial for a system like the one presented in this document and that the choice operation needs a big attention in order to make the best choice. 
+\newpage
 
 Table \ref{tab:experimental_results_complete} gathers the whole set of experimental result.
-\begin{table}[H]
+\begin{table}[ht]
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{||c|c|c|c|c|c|c|c||}
@@ -206,7 +244,7 @@ Distilbert & 0,74 & 0,04  & 0,05  & true  & 0     & median & 0   \\
 \label{tab:experimental_results_complete}
 \end{table}
 
-\begin{table}
+\begin{table}[t]
 \centering
 \resizebox{\textwidth}{!}{
 \begin{tabular}{||c|c|c|c|c|c|c|c||}
@@ -241,24 +279,6 @@ Albert                    & 0,48 & 0     & 0     & false & 96,08 & median & 0,4 
 \caption{Continued from previous table}
 \end{table}
 
-\begin{table}
-\centering
-\resizebox{\textwidth}{!}{
-\begin{tabular}{||c|c|c|c|c|c|c|c||}
-\hline
-Model & P@100 & Diff mean & Diff median & Multilang & Red ratio \% & Voting tech & Red \% \\
-\hline\hline
-Mpnet             & 0,88 & 0,13  & 0,12  & false & 9,88  & median & 0,4 \\
-PAlbert          & 0,86 & 0,1   & 0,11  & false & 6,52  & median & 0,4 \\
-Mpnet                 & 0,86 & 0,12  & 0,12  & false & 11,49 & median & 0,5 \\
-PAlbert          & 0,84 & 0,1   & 0,1   & false & 2,63  & median & 0,5 \\
-PAlbert          & 0,84 & 0,09  & 0,1   & false & 10,87 & mean   & 0,5 \\
-Mpnet                 & 0,84 & 0,12  & 0,12  & false & 15,72 & mean   & 0,5 \\
-\hline
-\end{tabular}
-}
-\caption{Best results table}
-\label{tab:experimental_results_best}
-\end{table}
+
 
 \end{document}

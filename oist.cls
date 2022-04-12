@@ -20,7 +20,7 @@
 \RequirePackage{eso-pic} % For the background picture on the title page
 \RequirePackage{amsthm,amsmath,amssymb,amsfonts,bbm}
 \RequirePackage{fancyhdr} % For the headers
-\RequirePackage{hyperref} % Adds clickable links at references
+\RequirePackage[pdfa]{hyperref} % Adds clickable links at references
 \RequirePackage{float}
 \RequirePackage{parskip}
 \RequirePackage{booktabs}

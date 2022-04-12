@@ -1,6 +1,6 @@
 \providecommand{\main}{..}
 \documentclass[\main/main.tex]{subfiles}
-
+\raggedbottom
 \colorlet{punct}{red!60!black}
 \definecolor{background}{HTML}{EEEEEE}
 \definecolor{delim}{RGB}{20,105,176}
@@ -164,7 +164,7 @@ XLM transformer has been released by Facebook, in 2019 \cite{DBLP:journals/corr/
 \end{enumerate}
 
 
-SentenceTransformers abstracts all the tokenization and averaging logics: given a sentence, it is tokenized, for each token it is extracted a n-dimensional vector (e.g. $[1, 768]$) and finally those vectors are averaged in order to obtain a single n-dimensional vector. To overcome the problem of transformer model longest manageable sequence, the service performs a tokenization, using the model tokenizer, in order to check if the input sentence is manageable by the chosen model. If it's longer, the sentence is splitted in order to perform the extraction without any problem. The pseudocode is visible in Algorithm \ref{alg_embedding_extraction}:
+SentenceTransformers abstracts all the tokenization and averaging logics: given a sentence, it is tokenized, for each token it is extracted a n-dimensional vector (e.g. $[1, 768]$) and finally those vectors are averaged in order to obtain a single n-dimensional vector. To overcome the problem of transformer model longest manageable sequence, the service performs a tokenization, using the model tokenizer, in order to check if the input sentence is manageable by the chosen model. If it's longer, the sentence is splitted in order to perform the extraction without any problem. The pseudocode is visible in Algorithm \ref{alg_embedding_extraction}.
 \begin{center}
     \begin{algorithm}[H]
      \KwData{Cleaned dataset}
@@ -259,7 +259,7 @@ Given a graph G with vertices labelled {1, 2, ..., $n$}, its \emph{adjacency mat
     \label{weight_matrix_graph}
 \end{figure}
 
-\textbf{Minimum spanning tree}: An edge-weighted graph is a graph where we associate weights or costs with each edge. The spanning tree of a graph (G) is a subset of G that covers all of its vertices using the minimum number of edges. A graph can have more than one spanning tree. A minimum spanning tree (MST) \cite{books/daglib/0029345} of an edge-weighted graph is a spanning tree whose weight (the sum of the weights of its edges) is no larger than the weight of any other spanning tree. The pseudocode for numerosity reduction algorithm is visible in Algorithm \ref{alg_numerosity_reduction}.
+\textbf{Minimum spanning tree}: An edge-weighted graph is a graph where we associate weights or costs with each edge. The spanning tree of a graph (G) is a subset of G that covers all of its vertices using the minimum number of edges. A graph can have more than one spanning tree. A minimum spanning tree (MST) \cite{books/daglib/0029345} of an edge-weighted graph is a spanning tree whose weight (the sum of the weights of its edges) is no larger than the weight of any other spanning tree. It is visible in Figure \ref{fig:mst_example} in gray lines. The pseudocode for numerosity reduction algorithm is visible in Algorithm \ref{alg_numerosity_reduction}.
 \begin{center}
     \begin{figure}[h]
     \centering
@@ -293,7 +293,7 @@ In order to complete a similarity search task, a way of scoring this similarity 
 \subsubsection{Long documents problem}
 Working with long documents is not trivial, due to intrinsic limitations of transformer models. As said, each model has an input sequence maximum length that cannot be exceeded because it will lead to errors in vectorized representation (sequence truncation, exception raising, \dots). A possible solution to this problem could be averaging all the vectors of different sentences that constitute the original text. The higher the number of sentences, the higher the information dilution: the final vector will be a vector that doesn't truly represent anything inside the original text, leading to high similarity scores even if the original documents are very different. In the next subsection will be presented the chosen similarity scoring approach.
 \subsubsection{Similarity scoring algorithm}
-As previously mentioned, working with long documents is not that easy. Starting from the cleaning phase where text bodies are divided in sentences, it has been decided to use a \emph{voting} approach. The voting approach allows to compare documents using the sentences that compose them, allowing in this way to let each sentence "choose" its most similar sentence from other document. The similarity is calculated using cosine similarity, which has been observed to work well in semantic similarity fields. The choice of the most similar sentence is performed keeping the highest scoring sentence in the research document and its score. To give a final result, the algorithm summarizes a resulting score computing one last operation (mean, median, ...) on the list of highest scoring sentences scores chosen by query sentences. The service produces a \emph{result dataset} with rows built like Listing \ref{ex_param_msg}:
+As previously mentioned, working with long documents is not that easy. Starting from the cleaning phase where text bodies are divided in sentences, it has been decided to use a \emph{voting} approach. The voting approach allows to compare documents using the sentences that compose them, allowing in this way to let each sentence "choose" its most similar sentence from other document. The similarity is calculated using cosine similarity, which has been observed to work well in semantic similarity fields. The choice of the most similar sentence is performed keeping the highest scoring sentence in the research document and its score. To give a final result, the algorithm summarizes a resulting score computing one last operation (mean, median, ...) on the list of highest scoring sentences scores chosen by query sentences. The service produces a \emph{result dataset} with rows built like Listing \ref{ex_param_msg}.
 \\
 \begin{center}
     \begin{lstlisting}[language=json, caption="Parameter message example", captionpos=b, label={ex_param_msg}]

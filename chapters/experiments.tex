@@ -1,5 +1,6 @@
 \providecommand{\main}{..}
 \documentclass[\main/main.tex]{subfiles}
+\raggedbottom
 \colorlet{punct}{red!60!black}
 \definecolor{background}{HTML}{EEEEEE}
 \definecolor{delim}{RGB}{20,105,176}
@@ -36,7 +37,7 @@
 \begin{document}
 \chapter{Experiments and results}
 \section{Experimental setup}
-Due to computation time constraints, it has not been possible to perform experiments on the whole document corpus made available by \emph{artea.com}. Thus, the dataset has been reduced in order to make possible the execution of different experiments in a reasonable time. As mentioned before in Chapter 4, a resulting dataset of 100 records has been created. For each of 10 queries, 5 related and 5 not related documents were searched manually. Each record is a key-value pair object composed like Listing \ref{exp_dataset_object}:
+Due to computation time constraints, it has not been possible to perform experiments on the whole document corpus made available by \emph{artea.com}. Thus, the dataset has been reduced in order to make possible the execution of different experiments in a reasonable time. As mentioned before in Chapter 4, a resulting dataset of 100 records has been created. For each of 10 queries, 5 related and 5 not related documents were searched manually. Each record is a key-value pair object composed like Listing \ref{exp_dataset_object}.
 \begin{center}
     \begin{lstlisting}[language=json, caption="Experimental dataset object", captionpos=b, label={exp_dataset_object}]
         {

@@ -24,8 +24,8 @@ In text similarity context, if two documents are similar their bags of words wil
     \item \textbf{Microblog Sentiment Analysis Based on Cross-media Bag-of-words Model}: in \cite{Wang2014MicroblogSA}, Bow is used to provide a unite representation of both text and image from microblog messages. This representation is then used to classify the sentiment of the message using a logistic regression.
     \item \textbf{SOFTCARDINALITY-CORE: Improving Text Overlap with Distributional Measures for Semantic Textual Similarity}: in \cite{Jimnez2013SOFTCARDINALITYCOREIT}, BoW is used to represent pair of texts with an associated weight for each word. This representation is then used to test three novel similarity measures presented in the paper.
 \end{enumerate}
-\subsubsection{TF/IDF}
-TF/IDF represents an enhancement of the BoW approach: it is a numerical measure that works on term-document pairs. TF/IDF consist of:
+\subsubsection{TF-IDF}
+TF-IDF represents an enhancement of the BoW approach: it is a numerical measure that works on term-document pairs. TF-IDF consist of:
 \begin{enumerate}
     \item Term frequency: refers to the number of times that a term $t$ occurs in document $d$
     \begin{center}
@@ -41,13 +41,13 @@ TF/IDF represents an enhancement of the BoW approach: it is a numerical measure 
         $N_t = $ number of documents containing term $t$\\
         $\mathrm{IDF}(t) = \ln(N_d/N_t)$
     \end{center}
-    The final result is given by the product of TF and IDF terms. An high TF/IDF score for a given couple $(t, d)$ means that the document is relevant in the document $d$ but it is rare in the whole document corpus.
+    The final result is given by the product of TF and IDF terms. An high TF-IDF score for a given couple $(t, d)$ means that the document is relevant in the document $d$ but it is rare in the whole document corpus.
 \end{enumerate}
-Some examples of TF/IDF implementations are shortly described here below.
+Some examples of TF-IDF implementations are shortly described here below.
 \begin{enumerate}
-    \item \textbf{KNN with TF-IDF Based Framework for Text Categorization}: in \cite{Trstenjak2014KNNWT}, TF/IDF is used to determine a weight matrix of documents that will be further used with KNN algorithm to classify documents into groups that describe the content of the documents.
-    \item \textbf{A novel TF-IDF weighting scheme for effective ranking}: in \cite{Paik2013ANT}, a normalized version of TF/IDF is used to capture two different aspects of term saliency. One component of the term frequency is effective for short queries, while the other performs better on long queries. The final weight is then measured by taking a weighted combination of these components, which is determined on the basis of the length of the corresponding query. Furthermore, TF/IDF has been used to constitute a baseline used to evaluate the TF/IDF variations proposed in the paper.
-    \item \textbf{Text Mining: Use of TF-IDF to Examine the Relevance of Words to Documents}: in \cite{Qaiser2018TextMU}, TF/IDF is used to find most relevant keywords from a collection of twenty random websites belonging to four different domains. Such keywords can describe those documents and can be used as tags to categorize the content.
+    \item \textbf{KNN with TF-IDF Based Framework for Text Categorization}: in \cite{Trstenjak2014KNNWT}, TF-IDF is used to determine a weight matrix of documents that will be further used with KNN algorithm to classify documents into groups that describe the content of the documents.
+    \item \textbf{A novel TF-IDF weighting scheme for effective ranking}: in \cite{Paik2013ANT}, a normalized version of TF-IDF is used to capture two different aspects of term saliency. One component of the term frequency is effective for short queries, while the other performs better on long queries. The final weight is then measured by taking a weighted combination of these components, which is determined on the basis of the length of the corresponding query. Furthermore, TF-IDF has been used to constitute a baseline used to evaluate the TF-IDF variations proposed in the paper.
+    \item \textbf{Text Mining: Use of TF-IDF to Examine the Relevance of Words to Documents}: in \cite{Qaiser2018TextMU}, TF-IDF is used to find most relevant keywords from a collection of twenty random websites belonging to four different domains. Such keywords can describe those documents and can be used as tags to categorize the content.
 \end{enumerate}
 \subsubsection{Word embeddings}
 Word embeddings are a multidimensional representation for text. Word embeddings techniques represent words as real-valued dense vectors in a given vector space. The idea is to give a similar representation for words that are used in a similar way, in opposition with approaches like BoW where words with similar usage have different representation (unless explicitly managed). Some examples of widely used text embeddings techniques are shortly described here below.

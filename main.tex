@@ -6,21 +6,28 @@
 \usepackage[table]{xcolor}
 \usepackage{longtable}
 \usepackage{kbordermatrix}
+\usepackage{titlesec}
+\usepackage{afterpage}
+\usepackage{emptypage}
 
 \begin{document}
 \normalsize
 \subfile{\main/chapters/title}
 \subfile{\main/chapters/Acknowledgements}
 \subfile{\main/chapters/Introduction}
-\subfile{\main/chapters/abbreviations}
-\subfile{\main/chapters/list_of_figures}
 
 \tableofcontents
 \addcontentsline{toc}{chapter}{Table of Contents}
 
+\subfile{\main/chapters/abbreviations}
+\subfile{\main/chapters/list_of_figures}
+\cleardoublepage
 \subfile{\main/chapters/state_of_the_art}
+\cleardoublepage
 \subfile{\main/chapters/Technologies}
+\cleardoublepage
 \subfile{\main/chapters/Architecture}
+\cleardoublepage
 \subfile{\main/chapters/Methods}
 \subfile{\main/chapters/Experiments}
 \subfile{\main/chapters/Conclusions}
